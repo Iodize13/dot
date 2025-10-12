@@ -1,0 +1,64 @@
+# Layout switch
+shift + Alt_L
+    setxkbmap -query | grep -q 'th' && setxkbmap us || setxkbmap th,us
+shift + Alt_R
+    setxkbmap -query | grep -q 'th' && setxkbmap us || setxkbmap th,us
+# Basic binds
+
+super + Return
+      $TERMINAL -e tmux
+super + {b,n}
+      brillo -q {-U,-A} 5 
+super + {s,d}
+      pactl set-sink-volume @DEFAULT_SINK@ {-2%,+2%}
+super + shift + {j,k}
+      pactl set-sink-volume @DEFAULT_SINK@ {-5%,+5%}
+super + m
+      kitty -e ncmpcpp
+super + i
+      kitty -e htop
+super + shift + a
+      kitty -e plusemixer
+
+# Et cetera...
+super + shift + x
+    prompt "Shutdown computer:?" "sudo -A shutdown -R now"
+super + shift + BackSpace
+    prompt "Reboot computer:?" "reboot"
+# super + r
+#     kitty -e yazi
+super + y
+    kitty -e y
+super + shift + y
+    wezterm -e y
+super + shift + w
+    $BROWSER
+# Print
+# screenshot
+# Hibernate
+super + F12
+    kitty -e nmtui
+super + z
+    clipmpv
+Print
+    flameshot gui
+super + shift + p
+    passmenu
+super + x
+    mpc pause; i3lock -e -f -c 1d2021; xset dpms force off
+# XF86Launch1
+#     xset dpms force off
+super + F4
+    prompt "Hibernate computer?" "sudo systemctl suspend"
+super + F6
+    kku-wifi
+super + F7
+    tether
+super + c
+    nmcli connect up 5e6a8083-1980-415d-a9bf-55c213925e26
+super + v 
+    nmcli connect up 3c75f44e-47c8-42ab-979c-aaf952183b00
+super + shift + c
+    firefox http://login.kku.ac.th
+super + shift + v
+    mpv $(xclip -o)
