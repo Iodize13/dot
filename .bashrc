@@ -10,6 +10,10 @@
 
 export TERMINAL=wezterm
 
+# src: https://github.com/dylanaraps/clutter-home
+export XDG_CONFIG_HOME=~
+export XDG_DATA_HOME=~
+
 exitstatus()
 {
     if [[ $? == 0 ]]; then
@@ -63,6 +67,8 @@ export PATH="$PATH:$HOME/.config/emacs/bin/"
 export PATH="$HOME/.cache/.bun/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 export PATH="$PATH:$HOME/.cargo/bin"
+export PATH="$PATH:$HOME/.local/share/gem/ruby/3.4.0/bin"
+
 
 shopt -s extglob cdspell
 
@@ -218,4 +224,3 @@ alias .3='cd ../../../'
 alias .4='cd ../../../..'
 alias .5='cd ../../../../..'
 alias l="ls -a1"
-asdfsafd
