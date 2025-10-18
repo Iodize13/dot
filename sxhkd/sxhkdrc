@@ -5,8 +5,9 @@ shift + Alt_R
     setxkbmap -query | grep -q 'th' && setxkbmap us || setxkbmap th,us
 # Basic binds
 
+# $TERMINAL -e tmux
 super + Return
-      $TERMINAL -e tmux
+      $TERMINAL
 super + {b,n}
       brillo -q {-U,-A} 5 
 super + {s,d}
