@@ -42,7 +42,8 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
 fi
 
 sxhkd &
-$TERMINAL -e tmux &
+# $TERMINAL -e tmux &
+$TERMINAL &
 
 #--------------- wallpaper --------------------
 # xwinwrap -g 1366x768 -ni -s -nf -b -un -argb -- gifview -w WID $HOME/wal/171450.gif -a &
@@ -56,7 +57,6 @@ redshift -l 21.028382:105.853734 &
 brave &
 setxkbmap -option caps:swapescape &
 thunderbird &
-discord &
 xwallpaper --zoom $HOME/wal/hina-snow-white.jpg &
 startlxde
 # exec gnome-session
