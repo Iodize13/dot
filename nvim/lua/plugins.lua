@@ -129,6 +129,23 @@ require("lazy").setup({
         "ThePrimeagen/harpoon",
         branch = "harpoon2",
         dependencies = { "nvim-lua/plenary.nvim" }
+    },
+    { "windwp/nvim-ts-autotag" },
+    { "nvim-treesitter/nvim-treesitter",
+	branch = 'master',
+    	lazy = false,
+	build = ":TSUpdate"
+    },
+    {
+	'derektata/lorem.nvim',
+	config = function()
+	    require("lorem").opts {
+		sentence_length = "mixed", -- using a default configuration
+		comma_chance = 0.3, -- 30% chance to insert a comma
+		max_commas = 2, -- maximum 2 commas per sentence
+		debounce_ms = 200, -- default debounce time in milliseconds
+	    }
+	end
     }
     -- { import = "nvchad.blink.lazyspec" }
 })
@@ -190,4 +207,14 @@ augroup("__formatter__", { clear = true })
 autocmd("BufWritePost", {
 	group = "__formatter__",
 	command = ":FormatWrite",
+})
+
+
+require('nvim-ts-autotag').setup({
+  opts = {
+    -- Defaults
+    enable_close = true, -- Auto close tags
+    enable_rename = true, -- Auto rename pairs of tags
+    enable_close_on_slash = false -- Auto close on trailing </
+  },
 })
