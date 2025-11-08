@@ -69,8 +69,8 @@ export PATH="$HOME/go/bin:$PATH"
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/.local/share/gem/ruby/3.4.0/bin"
 
-command -v fnm && eval "$(fnm env --use-on-cd --shell bash)"
-command -v toilet && toilet -f Cybermedium --rainbow "It's just
+command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd --shell bash)"
+command -v toilet &> /dev/null && toilet -f Cybermedium --rainbow "It's just
 earthly things."
 
 shopt -s extglob cdspell
