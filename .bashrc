@@ -72,6 +72,7 @@ export PATH="$PATH:$HOME/.local/share/gem/ruby/3.4.0/bin"
 command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd --shell bash)"
 command -v toilet &> /dev/null && toilet -f Cybermedium --rainbow "It's just
 earthly things."
+command -v fzf &> /dev/null && eval "$(fzf --bash)"
 
 shopt -s extglob cdspell
 
