@@ -5,7 +5,7 @@ local dimmer = { brightness = 0.05 }
 -- This will hold the configuration.
 local config = wezterm.config_builder()
 
--- config.window_background_opacity = 0.88
+config.window_background_opacity = 0.88
 config.window_decorations = "RESIZE"
 config.hide_tab_bar_if_only_one_tab = true
 -- config.background = {

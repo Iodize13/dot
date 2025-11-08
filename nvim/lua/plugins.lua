@@ -98,20 +98,13 @@ require("lazy").setup({
     { "rolv-apneseth/tfm.nvim" },
     { "mason-org/mason.nvim", opts = {} },
     { "nvim-lua/plenary.nvim", lazy = true },
-    {
-        "nvchad/ui",
-        config = function()
-            require "nvchad" 
-        end,
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-    },
-    {
-        "nvchad/base46",
-        lazy = true,
-        build = function()
-            require("base46").load_all_highlights()
-        end,
-    },
+    -- {
+    --     "nvchad/base46",
+    --     lazy = true,
+    --     build = function()
+    --         require("base46").load_all_highlights()
+    --     end,
+    -- },
     {
         "pmizio/typescript-tools.nvim",
         dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
@@ -146,6 +139,19 @@ require("lazy").setup({
 		debounce_ms = 200, -- default debounce time in milliseconds
 	    }
 	end
+    },
+    {
+	"nvim-tree/nvim-tree.lua",
+	version = "*",
+	lazy = false,
+	dependencies = {
+	    "nvim-tree/nvim-web-devicons",
+	},
+	config = function()
+	    require("nvim-tree").setup {}
+	end,
+    }, {
+	"xiyaowong/transparent.nvim", lazy = false,
     }
     -- { import = "nvchad.blink.lazyspec" }
 })
