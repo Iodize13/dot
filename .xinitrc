@@ -42,21 +42,15 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
 fi
 
 sxhkd &
-# $TERMINAL -e tmux &
-$TERMINAL &
-
-#--------------- wallpaper --------------------
-# xwinwrap -g 1366x768 -ni -s -nf -b -un -argb -- gifview -w WID $HOME/wal/171450.gif -a &
+$TERMINAL -e tmux &
 
 # Invidious
 # podman restart 94dfc4181e7f & podman restart babcd77d56b2 &
 redshift -l 21.028382:105.853734 &
 # autossh -M 10900 -fN -o "PubkeyAuthentication=yes" -o "StrictHostKeyChecking=false" -o "PasswordAuthentication=no" -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -R iodize13.com:10022:localhost:22 ionize13@iodize13.com &
-# xcompmgr &
-# GTK_THEME=Adwaita:dark gvim &
 brave &
-setxkbmap -option caps:swapescape &
-thunderbird &
-xwallpaper --zoom $HOME/wal/hina-snow-white.jpg &
-startlxde
-# exec gnome-session
+setxkbmap -option caps:escape &
+discord &
+setsid compton &
+xwallpaper --zoom $HOME/wal/OIP-1901585173.zTkbwyyEkjFl7HcZH8S9UgHaIM &
+exec dwm

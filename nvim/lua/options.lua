@@ -22,3 +22,8 @@ vim.opt.smartcase = true            -- but make it case sensitive if an uppercas
 vim.opt.guicursor = 'n-v-c-sm-i-ci-ve:block'
 vim.opt.makeprg="g++ -Wall -Wconversion -Wshadow -Wfatal-errors -DLOCAL -g -std=c++20 -fsanitize=undefined,address -I/home/ionize13/github.com/competitive-programming/.template -Winvalid-pch -Wl,-z,stack-size=0x100000000 %:r.cpp"
 vim.opt.laststatus = 0;
+
+vim.api.nvim_create_autocmd("BufEnter", {
+    pattern = "note.md",
+    command = ":norm Go",
+})

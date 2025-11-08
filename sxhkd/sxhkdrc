@@ -20,6 +20,8 @@ super + i
       kitty -e htop
 super + shift + a
       kitty -e plusemixer
+super + c
+      st -e note.md
 
 # Et cetera...
 super + shift + x
@@ -55,8 +57,8 @@ super + F6
     kku-wifi
 super + F7
     tether
-super + c
-    nmcli connect up 5e6a8083-1980-415d-a9bf-55c213925e26
+# super + c
+#     nmcli connect up 5e6a8083-1980-415d-a9bf-55c213925e26
 super + v 
     nmcli connect up 3c75f44e-47c8-42ab-979c-aaf952183b00
 super + shift + c

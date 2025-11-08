@@ -69,6 +69,9 @@ export PATH="$HOME/go/bin:$PATH"
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/.local/share/gem/ruby/3.4.0/bin"
 
+command -v fnm && eval "$(fnm env --use-on-cd --shell bash)"
+command -v toilet && toilet -f Cybermedium --rainbow "It's just
+earthly things."
 
 shopt -s extglob cdspell
 
@@ -210,9 +213,6 @@ mkcd='function _mkcd(){ mkdir -p "$1" && cd "$1"; }; _mkcd'
 GTK_IM_MODULE=fcitx
 QT_IM_MODULE=fcitx
 XMODIFIERS=@im=fcitx
-eval "$(fnm env --use-on-cd --shell bash)"
-toilet -f Cybermedium --rainbow "It's just
-earthly things."
 
 
 # -- CP
