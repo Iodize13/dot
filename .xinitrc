@@ -53,4 +53,5 @@ setxkbmap -option caps:escape &
 discord &
 setsid compton &
 xwallpaper --zoom $HOME/wal/OIP-1901585173.zTkbwyyEkjFl7HcZH8S9UgHaIM &
+dwmbar &
 exec dwm
