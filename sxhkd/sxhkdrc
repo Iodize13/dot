@@ -21,7 +21,7 @@ super + i
 super + shift + a
       kitty -e plusemixer
 super + c
-      st -e $HOME/note.md
+      st -e $EDITOR $HOME/note.md
 
 # Et cetera...
 super + shift + x
