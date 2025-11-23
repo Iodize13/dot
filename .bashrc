@@ -57,11 +57,22 @@ unset color_prompt force_color_prompt
 # [[ $TERM != "screen" ]] && exec abduco -A my-session dvtm-status
 # alias l=sl
 # alias l='\ls -1a --color=auto'
-alias ls='ls --color=auto'
+alias l="ls -a1 --color=auto"
+alias ls="l"
 alias grep='grep --color=auto'
 alias t="task"
 alias ta="task add"
 alias figma="figma-linux"
+alias sy="sudo systemctl"
+
+f() {
+    project="$HOME/github.com/"
+    cd "$project$(ls  "$project" | fzf)"
+}
+
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
 
 export PATH="$PATH:$HOME/.config/emacs/bin/"
 export PATH="$HOME/.cache/.bun/bin:$PATH"
@@ -73,6 +84,8 @@ command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd --shell bash)"
 command -v toilet &> /dev/null && toilet -f Cybermedium --rainbow "It's just
 earthly things."
 command -v fzf &> /dev/null && eval "$(fzf --bash)"
+command -v direnv &> /dev/null && eval "$(direnv hook bash)"
+source /usr/share/git/completion/git-completion.bash
 
 shopt -s extglob cdspell
 
@@ -209,7 +222,6 @@ alias vim=nvim
 
 export HISTSIZE=2000
 export HISTFILESIZE=2000
-mkcd='function _mkcd(){ mkdir -p "$1" && cd "$1"; }; _mkcd'
 
 GTK_IM_MODULE=fcitx
 QT_IM_MODULE=fcitx
@@ -224,4 +236,3 @@ alias ...='cd ../..'
 alias .3='cd ../../../'
 alias .4='cd ../../../..'
 alias .5='cd ../../../../..'
-alias l="ls -a1"
