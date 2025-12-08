@@ -98,13 +98,6 @@ require("lazy").setup({
     { "rolv-apneseth/tfm.nvim" },
     { "mason-org/mason.nvim", opts = {} },
     { "nvim-lua/plenary.nvim", lazy = true },
-    -- {
-    --     "nvchad/base46",
-    --     lazy = true,
-    --     build = function()
-    --         require("base46").load_all_highlights()
-    --     end,
-    -- },
     {
         "pmizio/typescript-tools.nvim",
         dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
@@ -152,8 +145,16 @@ require("lazy").setup({
 	end,
     }, {
 	"xiyaowong/transparent.nvim", lazy = false,
-    }
-    -- { import = "nvchad.blink.lazyspec" }
+    }, {
+	"akinsho/toggleterm.nvim", version = "*", config = true
+    },
+    { "kid-icarus/jira.nvim" },
+    { 'akinsho/git-conflict.nvim', version = "*", config = true },
+    { 
+	'nvim-lualine/lualine.nvim',
+	dependencies = { 'nvim-tree/nvim-web-devicons' }
+    },
+    { 'shaunsingh/nord.nvim'}
 })
 
 require("skel-nvim").setup{
@@ -168,41 +169,16 @@ require('formatter').setup({
   logging = false,
   filetype = {
     javascript = {
-        -- prettierd
-       function()
-          return {
-            exe = "prettierd",
-            args = {vim.api.nvim_buf_get_name(0)},
-            stdin = true
-          }
-        end
+	require("formatter.defaults.prettierd")
     },
     typescript = {
-       function()
-          return {
-            exe = "prettierd",
-            args = {vim.api.nvim_buf_get_name(0)},
-            stdin = true
-          }
-        end
+	require("formatter.defaults.prettierd")
     },
     javascriptreact = {
-       function()
-          return {
-            exe = "prettierd",
-            args = {vim.api.nvim_buf_get_name(0)},
-            stdin = true
-          }
-        end
+	require("formatter.defaults.prettierd")
     },
     typescriptreact = {
-       function()
-          return {
-            exe = "prettierd",
-            args = {vim.api.nvim_buf_get_name(0)},
-            stdin = true
-          }
-        end
+	require("formatter.defaults.prettierd")
     },
   }
 })
@@ -224,3 +200,19 @@ require('nvim-ts-autotag').setup({
     enable_close_on_slash = false -- Auto close on trailing </
   },
 })
+
+require("toggleterm").setup{}
+
+require('lualine').setup {
+  options = {
+    theme = 'nord',
+  },
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {'branch', 'diff', 'diagnostics'},
+    lualine_c = {'filename'},
+  },
+  inactive_sections = {
+    lualine_c = {'filename'},
+  },
+}
