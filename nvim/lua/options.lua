@@ -18,6 +18,7 @@ vim.opt.incsearch = true            -- search as characters are entered
 vim.opt.hlsearch = false            -- do not highlight matches
 vim.opt.ignorecase = true           -- ignore case in searches by default
 vim.opt.smartcase = true            -- but make it case sensitive if an uppercase is entered
+vim.opt.scrolloff = 8               -- scroll when cursor is 8 lines away from screen edge
 
 vim.opt.guicursor = 'n-v-c-sm-i-ci-ve:block'
 vim.opt.makeprg="g++ -Wall -Wconversion -Wshadow -Wfatal-errors -DLOCAL -g -std=c++20 -fsanitize=undefined,address -I/home/ionize13/github.com/competitive-programming/.template -Winvalid-pch -Wl,-z,stack-size=0x100000000 %:r.cpp"
