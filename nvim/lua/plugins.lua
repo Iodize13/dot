@@ -16,7 +16,19 @@ require("lazy").setup({
     {
         "saghen/blink.cmp",
         -- optional: provides snippets for the snippet source
-        dependencies = { "rafamadriz/friendly-snippets" },
+        dependencies = { "rafamadriz/friendly-snippets",
+	{
+	    "supermaven-inc/supermaven-nvim",
+	    opts = {
+		disable_inline_completion = true, -- disables inline completion for use with cmp
+		disable_keymaps = true,           -- disables built in keymaps for more manual control
+		ignore_filetypes = { "markdown" },
+	    }
+	},
+	{
+	    "huijiro/blink-cmp-supermaven"
+	},
+    },
 
         -- Use a release tag to download pre-built binaries
         version = "*",
@@ -92,6 +104,16 @@ require("lazy").setup({
 
             -- Signature help when tying
             signature = { enabled = true },
+	    sources = {
+		default = { "lsp", 'path', "supermaven", "snippets", 'buffer' },
+		providers = {
+		    supermaven = {
+			name = 'supermaven',
+			module = "blink-cmp-supermaven",
+			async = true
+		    }
+		}
+	    },
         },
         opts_extend = { "sources.default" },
     },
@@ -154,7 +176,7 @@ require("lazy").setup({
 	'nvim-lualine/lualine.nvim',
 	dependencies = { 'nvim-tree/nvim-web-devicons' }
     },
-    { 'shaunsingh/nord.nvim'}
+    { 'shaunsingh/nord.nvim'},
 })
 
 require("skel-nvim").setup{
