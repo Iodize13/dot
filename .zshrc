@@ -1,19 +1,13 @@
 HISTFILE=~/.histfile
-HISTSIZE=2000
-SAVEHIST=2000
+HISTSIZE=10000000
+SAVEHIST=10000000
 autoload -Uz compinit
 compinit
 setopt autocd extendedglob
 unsetopt beep
 bindkey -e
 
-export TERMINAL=wezterm
-export SYSTEMD_EDITOR=nvim
-export EDITOR=nvim
-
-# src: https://github.com/dylanaraps/clutter-home
-export XDG_CONFIG_HOME=~
-export XDG_DATA_HOME=~
+[ -f "$HOME/profile" ] && source "$HOME/profile"
 
 exitstatus()
 {
@@ -43,7 +37,8 @@ if [ "$color_prompt" = yes ]; then
     GREEN="$(tput setaf 2)"
     RESET="$(tput sgr0)"
     precmd() { print -rP "%m ${GREEN}%~${RESET}" }
-    PS1="$(exitstatus) > "
+    PS1="$(exitstatus) "
+    
 else
     PS1='%n@%m:%~\$ '
 fi
@@ -83,11 +78,11 @@ f() {
     project="$HOME/github.com"
 
     if [[ -z "$1" ]]; then
-        cd "$project/$(ls  "$project" | fzf)"
+        $EDITOR "$project/$(ls  "$project" | fzf)"
     elif [[ "$1" == "qw" ]]; then
-        cd "$project/qualiva-space-web"
+        $EDITOR "$project/qualiva-space-web"
     elif [[ "$1" == "qc" ]]; then
-        cd "$project/qualiva-space-core-service"
+        $EDITOR "$project/qualiva-space-core-service"
     fi
 }
 
@@ -95,6 +90,7 @@ mkcd() {
     mkdir -p "$1" && cd "$1"
 }
 
+# export GOPATH="$XDG_DATA_HOME/go"
 export PATH="$PATH:$HOME/.config/emacs/bin/"
 export PATH="$HOME/.cache/.bun/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
@@ -106,5 +102,5 @@ command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd --shell zsh)"
 command -v toilet &> /dev/null && toilet -f Cybermedium --rainbow "It's just
 earthly things."
 command -v fzf &> /dev/null && source <(fzf --zsh)
-# command -v direnv &> /dev/null && eval "$(direnv hook bash)"
+command -v direnv &> /dev/null && eval "$(direnv hook zsh)"
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
