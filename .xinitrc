@@ -1,48 +1,30 @@
 #!/bin/sh
 
-userresources=$HOME/.Xresources
 usermodmap=$HOME/.Xmodmap
-# userprofile=$HOME/.xprofile
-sysresources=/etc/X11/xinit/.Xresources
 sysmodmap=/etc/X11/xinit/.Xmodmap
 
 # merge in defaults and keymaps
 
-if [ -f $sysresources ]; then
-
-    xrdb -merge $sysresources
-
-fi
+# if [ -f $sysresources ]; then
+#
+#     xrdb -merge $sysresources
+#
+# fi
 
 if [ -f $sysmodmap ]; then
     xmodmap $sysmodmap
-fi
-
-if [ -f "$userresources" ]; then
-
-    xrdb -merge "$userresources"
-
 fi
 
 if [ -f "$usermodmap" ]; then
     xmodmap "$usermodmap"
 fi
 
-# if [ -f "$userprofile" ]; then
-#     . "$userprofile"
-# fi
+[ -f "$HOME/profile" ] && source "$HOME/profile"
 
-# start some nice programs
-
-if [ -d /etc/X11/xinit/xinitrc.d ] ; then
- for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
-  [ -x "$f" ] && . "$f"
- done
- unset f
-fi
-
+emacs --daemon &
 sxhkd &
-$TERMINAL -e tmux &
+# $TERMINAL -e tmux new-session -A -s main &
+$TEMRINAL &
 
 # Invidious
 # podman restart 94dfc4181e7f & podman restart babcd77d56b2 &
@@ -51,7 +33,10 @@ redshift -l 21.028382:105.853734 &
 brave &
 setxkbmap -option caps:escape &
 discord &
+# setsid compton --blur-background &
 setsid compton &
-xwallpaper --zoom $HOME/wal/OIP-1901585173.zTkbwyyEkjFl7HcZH8S9UgHaIM &
-dwmbar &
+xwallpaper --zoom $HOME/wal/wallhaven-yqxzqx.jpg &
+dwmblocks &
+messenger &
+# whoami > /home/ionize13/check-pwd.txt &
 exec dwm
