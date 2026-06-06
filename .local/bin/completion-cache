@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# src: https://raoulcoutard.com/posts/2026-02-04-shell-completion-caching-en/
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache/shell-completions}"
+mkdir -p "$CACHE_DIR"
+
+cache_completion() {
+    local tool=$1
+    local shell_type=bash
+    local cache_file="$CACHE_DIR/$tool.$shell_type"
+    shift
+    
+    _have $tool || return 0
+
+    if [[ ! -f "$cache_file" || -n $(find "$cache_file" -mtime +7) ]]; then
+        eval "$@" > "$cache_file" 2>/dev/null
+    fi
+    
+    source "$cache_file"
+}

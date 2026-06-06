@@ -1,0 +1,211 @@
+/* ==UserStyle==
+@name           Hermes Dashboard Custom
+@namespace      github.com/yourname/dotfiles
+@version        0.1.0
+@description    compact/fullscreen Hermes chat dashboard
+@match          http://127.0.0.1:9119/*
+==/UserStyle== */
+body:has([data-chat-active="true"]) {
+  overflow: hidden !important;
+}
+
+/* ------------------------------------------------------------
+   1) Remove the "Chat" word from sidebar nav
+   ------------------------------------------------------------ */
+
+/* Hide the text label for the Chat nav item, keep the icon. */
+body:has([data-chat-active="true"]) #app-sidebar a[href="/chat"] span:not([aria-hidden]) {
+  display: none !important;
+}
+
+/* Make the Chat nav row icon-only and remove excess row padding. */
+body:has([data-chat-active="true"]) #app-sidebar a[href="/chat"] {
+  width: 3.25rem !important;
+  height: 3.25rem !important;
+  padding: 0 !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  clip-path: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove active left bar + hover/active background overlay from Chat row. */
+body:has([data-chat-active="true"]) #app-sidebar a[href="/chat"] span[aria-hidden] {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------
+   2) Make the terminal full screen
+   ------------------------------------------------------------ */
+
+/* Remove dashboard page padding on chat route. */
+body:has([data-chat-active="true"]) main,
+body:has([data-chat-active="true"]) [data-chat-active="true"] {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* The persistent Chat host becomes the full viewport. */
+body:has([data-chat-active="true"]) [data-chat-active="true"] {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 30 !important;
+  display: flex !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  background: #000 !important;
+}
+
+/* Remove ChatPage gaps and make its children stretch. */
+body:has([data-chat-active="true"]) [data-chat-active="true"] > div,
+body:has([data-chat-active="true"]) [data-chat-active="true"] > div > div {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  gap: 0 !important;
+}
+
+/* Terminal wrapper: no rounded window, no padding, no shadow. */
+body:has([data-chat-active="true"]) .hermes-chat-xterm-host {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Parent of xterm host. Uses :has because the wrapper has only Tailwind classes. */
+body:has([data-chat-active="true"]) div:has(> .hermes-chat-xterm-host) {
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  width: 100% !important;
+  height: 100% !important;
+  flex: 1 1 auto !important;
+}
+
+/* Hide the right-side model/tools sidebar on desktop so terminal is truly fullscreen. */
+body:has([data-chat-active="true"]) #chat-side-panel {
+  display: none !important;
+}
+
+/* Optional: hide "copy last response" button for a cleaner terminal.
+   Remove this block if you still want the copy button. */
+body:has([data-chat-active="true"]) div:has(> .hermes-chat-xterm-host) > button {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------
+   3) Sidebar becomes overlay; hamburger floats above terminal
+   ------------------------------------------------------------ */
+
+/* Floating hamburger container.
+   Keep the header itself transparent to pointer events so it cannot create
+   an invisible unclickable box over the terminal. The actual button below
+   gets pointer-events back. */
+body:has([data-chat-active="true"]) header {
+  display: block !important;
+  position: fixed !important;
+  top: 0.75rem !important;
+  left: 0.75rem !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 2147483647 !important;
+
+  width: 2.75rem !important;
+  height: 2.75rem !important;
+  min-width: 2.75rem !important;
+  min-height: 2.75rem !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  pointer-events: none !important;
+}
+
+/* Hide Hermes wordmark in the floating mobile header. */
+body:has([data-chat-active="true"]) header > *:not(button) {
+  display: none !important;
+}
+
+/* Rounded-square hamburger button.
+   It is fixed independently of the header so it stays clickable even if the
+   dashboard/header layout classes change at 125% zoom. */
+body:has([data-chat-active="true"]) header button[aria-controls="app-sidebar"] {
+  display: flex !important;
+  position: fixed !important;
+  top: 0.75rem !important;
+  left: 0.75rem !important;
+  z-index: 2147483647 !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  width: 2.75rem !important;
+  height: 2.75rem !important;
+  min-width: 2.75rem !important;
+  min-height: 2.75rem !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+
+  border-radius: 0.65rem !important;
+  background: rgba(0, 0, 0, 0.78) !important;
+  background-color: rgba(0, 0, 0, 0.78) !important;
+  color: #f0e6d2 !important;
+  border: 1px solid rgba(240, 230, 210, 0.42) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  backdrop-filter: blur(8px) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* Center icon inside button. */
+body:has([data-chat-active="true"]) header button[aria-controls="app-sidebar"] svg {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  display: block !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Sidebar is overlay/off-canvas on Chat. */
+body:has([data-chat-active="true"]) #app-sidebar {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 900 !important;
+
+  width: 16rem !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+
+  transform: translateX(-100%) !important;
+  transition: transform 180ms ease-out !important;
+  flex-shrink: 0 !important;
+}
+
+/* Open sidebar when hamburger is expanded. */
+body:has([data-chat-active="true"]):has(header button[aria-controls="app-sidebar"][aria-expanded="true"])
+  #app-sidebar {
+  transform: translateX(0) !important;
+}
+
+/* Backup open selector, depending on Tailwind class state. */
+body:has([data-chat-active="true"]) #app-sidebar.translate-x-0 {
+  transform: translateX(0) !important;
+}
+
+/* Ensure terminal is not pushed down by header padding. */
+body:has([data-chat-active="true"]) .pt-14,
+body:has([data-chat-active="true"]) .lg\:pt-0 {
+  padding-top: 0 !important;
+}
