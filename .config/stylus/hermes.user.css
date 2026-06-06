@@ -1,9 +1,10 @@
 /* ==UserStyle==
-@name           Hermes Dashboard Custom
+@name           Hermes Dashboard - Fullscreen Chat
 @namespace      github.com/Iodize13/dot
 @version        0.1.0
 @description    compact/fullscreen Hermes chat dashboard
 @match          http://127.0.0.1:9119/*
+@match          http://localhost:9119/* 
 ==/UserStyle== */
 body:has([data-chat-active="true"]) {
   overflow: hidden !important;
