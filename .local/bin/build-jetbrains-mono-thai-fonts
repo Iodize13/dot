@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# Builds "JetBrains Mono Thai" and "JetBrainsMono NF Thai" font families by
+# merging Thai glyphs from Noto Sans Thai Looped into JetBrains Mono /
+# JetBrainsMono Nerd Font, normalizing Thai advance widths to the monospace
+# cell so the terminal/editor grid stays aligned.
+#
+# Requires: fonttools (pyftmerge, pip install fonttools), python3
+# Source font packages (Arch): ttf-jetbrains-mono, ttf-jetbrains-mono-nerd, noto-fonts
+#
+# Output installed to $XDG_DATA_HOME/fonts/jetbrains-mono-thai (or
+# ~/.local/share/fonts if XDG_DATA_HOME is unset), then fc-cache is refreshed.
+
+set -euo pipefail
+
+JBM_DIR=/usr/share/fonts/TTF
+THAI_FONT=/usr/share/fonts/noto/NotoSansThaiLooped-Regular.ttf
+OUT_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/fonts/jetbrains-mono-thai"
+CELL_WIDTH=600 # JetBrains Mono's monospace advance width
+
+WORKDIR=$(mktemp -d)
+trap 'rm -rf "$WORKDIR"' EXIT
+
+fix_metrics() {
+  local src=$1 dst=$2 family=$3
+  python3 - "$src" "$dst" "$family" <<'PYEOF'
+import sys
+from fontTools.ttLib import TTFont
+
+src, dst, family_name = sys.argv[1], sys.argv[2], sys.argv[3]
+CELL_WIDTH = 600
+
+f = TTFont(src)
+cmap = f.getBestCmap()
+hmtx = f["hmtx"]
+
+for cp in range(0x0E00, 0x0E80):
+    glyph = cmap.get(cp)
+    if glyph is None:
+        continue
+    advance, lsb = hmtx[glyph]
+    if advance == 0:
+        continue  # zero-width combining marks (tone marks, vowel signs)
+    new_lsb = lsb + (CELL_WIDTH - advance) // 2
+    hmtx[glyph] = (CELL_WIDTH, new_lsb)
+
+subfamily = "Regular"
+for rec in f["name"].names:
+    if rec.nameID == 2 and rec.platformID == 3:
+        subfamily = rec.toUnicode()
+
+for rec in f["name"].names:
+    if rec.nameID == 1:
+        rec.string = family_name
+    elif rec.nameID == 4:
+        rec.string = f"{family_name} {subfamily}"
+    elif rec.nameID == 6:
+        rec.string = f"{family_name.replace(' ', '')}-{subfamily.replace(' ', '')}"
+    elif rec.nameID == 16:
+        rec.string = family_name
+    elif rec.nameID == 17:
+        rec.string = subfamily
+
+f.save(dst)
+PYEOF
+}
+
+build_variant() {
+  local base_font=$1 out_name=$2 family=$3
+  pyftmerge "$base_font" "$THAI_FONT" --output-file="$WORKDIR/merged.ttf" >/dev/null
+  fix_metrics "$WORKDIR/merged.ttf" "$OUT_DIR/$out_name" "$family"
+  rm -f "$WORKDIR/merged.ttf"
+}
+
+mkdir -p "$OUT_DIR"
+
+for w in Regular Bold Italic BoldItalic; do
+  echo "Building JetBrains Mono Thai $w..."
+  build_variant "$JBM_DIR/JetBrainsMono-$w.ttf" "JetBrainsMonoThai-$w.ttf" "JetBrains Mono Thai"
+
+  echo "Building JetBrainsMono NF Thai $w..."
+  build_variant "$JBM_DIR/JetBrainsMonoNerdFont-$w.ttf" "JetBrainsMonoNFThai-$w.ttf" "JetBrainsMono NF Thai"
+done
+
+fc-cache -f "$OUT_DIR" >/dev/null
+echo "Done. Installed to $OUT_DIR"

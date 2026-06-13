@@ -20,6 +20,8 @@
 !applications/video.desktop
 !discord/settings.json
 !xorg/00-keyboard.conf
+!zed/
+!zed/settings.json
 !.config/
 !.config/stylus/
 !.config/stylus/**

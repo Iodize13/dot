@@ -1,0 +1,130 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "icon_theme": {
+    "mode": "dark",
+    "light": "Zed (Default)",
+    "dark": "Warm Charmed Icons",
+  },
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "Dracula",
+  },
+  "theme_overrides": {
+    "Dracula": {
+      "terminal.background": "#300A24",
+      "border.variant": "#282A36",
+      "border": "#282A36",
+      "panel.background": "#282A36",
+      "players": [
+        {
+          "cursor": "#BD9DFF",
+        },
+      ],
+      "syntax": {
+        "comment": {
+          "font_style": "italic",
+        },
+        "comment.doc": {
+          "font_style": "italic",
+        },
+      },
+    },
+  },
+  "diff_view_style": "unified",
+  "modeline_lines": 5,
+  "cursor_shape": "block",
+  "cursor_blink": false,
+  "search": {
+    "button": true,
+  },
+  "terminal": {
+    "toolbar": {
+      "breadcrumbs": false,
+    },
+    "bell": "system",
+    "font_family": "JetBrainsMono NF Thai",
+    "font_size": 14.15,
+  },
+  "outline_panel": {
+    "dock": "right",
+  },
+  "collaboration_panel": {
+    "dock": "right",
+  },
+  "agent": {
+    "dock": "left",
+    "favorite_models": [],
+    "model_parameters": [],
+  },
+  "git_panel": {
+    "dock": "right",
+  },
+  "project_panel": {
+    "hide_hidden": false,
+    "dock": "right",
+    "hide_root": true,
+    "scrollbar": {
+      "show": "never",
+    },
+    "indent_guides": {
+      "show": "never",
+    },
+  },
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+    "anthropic_retention": false,
+  },
+  "session": {
+    "trust_all_worktrees": true,
+  },
+  "vim_mode": true,
+  "ui_font_size": 15.0,
+  "buffer_font_size": 14.0,
+  "title_bar": {
+    "show_onboarding_banner": false,
+    "show_project_items": false,
+    "show_branch_name": true,
+    "show_user_menu": false,
+  },
+  "tab_bar": {
+    "show": false,
+  },
+  "status_bar": {
+    "experimental.show": false,
+  },
+  "scrollbar": {
+    "show": "never",
+  },
+  "gutter": {
+    "min_line_number_digits": 0,
+  },
+  "indent_guides": {
+    "enabled": false,
+  },
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000,
+    },
+  },
+  "git": {
+    "git_gutter": "hide",
+    "inline_blame": {
+      "enabled": false,
+    },
+  },
+  "centered_layout": {
+    "right_padding": 0.15,
+    "left_padding": 0.15,
+  },
+  "buffer_font_family": "JetBrains Mono Thai",
+  "ui_font_family": "JetBrains Mono Thai",
+}
