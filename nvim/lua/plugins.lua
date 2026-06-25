@@ -2,7 +2,7 @@ local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   vim.fn.system({
-    "git",
+"git",
     "clone",
     "--filter=blob:none",
     "https://github.com/folke/lazy.nvim.git",
@@ -12,23 +12,52 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+vim.g.supermaven_enabled = true
+
+function ToggleSupermaven()
+    local blink = require("blink.cmp")
+    local current_sources = blink.config.sources.default
+    local has_supermaven = false
+
+    for _, source in ipairs(current_sources) do
+        if source == "supermaven" then
+            has_supermaven = true
+            break
+        end
+    end
+
+    if has_supermaven then
+        blink.config.sources.default = { "lsp", "path", "snippets", "buffer" }
+        vim.g.supermaven_enabled = false
+        vim.notify("Supermaven disabled", vim.log.levels.INFO)
+    else
+        blink.config.sources.default = { "lsp", "path", "supermaven", "snippets", "buffer" }
+        vim.g.supermaven_enabled = true
+        vim.notify("Supermaven enabled", vim.log.levels.INFO)
+    end
+end
+
+vim.api.nvim_create_user_command("SupermavenToggle", ToggleSupermaven, { desc = "Toggle Supermaven completion" })
+
+package.loaded['cmp'] = { register_source = function() end }
+
 require("lazy").setup({
+    {
+        "supermaven-inc/supermaven-nvim",
+        opts = {
+            disable_inline_completion = true,
+            disable_keymaps = true,
+            ignore_filetypes = { "markdown" },
+        },
+    },
+    {
+        "huijiro/blink-cmp-supermaven",
+        lazy = true,
+    },
     {
         "saghen/blink.cmp",
         -- optional: provides snippets for the snippet source
-        dependencies = { "rafamadriz/friendly-snippets",
-	{
-	    "supermaven-inc/supermaven-nvim",
-	    opts = {
-		disable_inline_completion = true, -- disables inline completion for use with cmp
-		disable_keymaps = true,           -- disables built in keymaps for more manual control
-		ignore_filetypes = { "markdown" },
-	    }
-	},
-	{
-	    "huijiro/blink-cmp-supermaven"
-	},
-    },
+	dependencies = { "rafamadriz/friendly-snippets" },
 
         -- Use a release tag to download pre-built binaries
         version = "*",
@@ -71,14 +100,6 @@ require("lazy").setup({
                 nerd_font_variant = "mono",
             },
 
-            sources = {
-                -- `lsp`, `buffer`, `snippets`, `path`, and `omni` are built-in
-                -- so you don't need to define them in `sources.providers`
-                default = { "lsp", "path", "snippets", "buffer" },
-
-                -- Sources are configured via the sources.providers table
-            },
-
             -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
             -- You may use a lua implementation instead by using `implementation = "lua"` or fallback to the lua implementation,
             -- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
@@ -104,16 +125,16 @@ require("lazy").setup({
 
             -- Signature help when tying
             signature = { enabled = true },
-	    sources = {
-		default = { "lsp", 'path', "supermaven", "snippets", 'buffer' },
-		providers = {
-		    supermaven = {
-			name = 'supermaven',
-			module = "blink-cmp-supermaven",
-			async = true
-		    }
-		}
-	    },
+            sources = {
+                default = { "lsp", 'path', "snippets", 'buffer' },
+                providers = {
+                    supermaven = {
+                        name = 'supermaven',
+                        module = "blink-cmp-supermaven",
+                        async = true,
+                    }
+                }
+            },
         },
         opts_extend = { "sources.default" },
     },
@@ -170,13 +191,14 @@ require("lazy").setup({
     }, {
 	"akinsho/toggleterm.nvim", version = "*", config = true
     },
-    { "kid-icarus/jira.nvim" },
     { 'akinsho/git-conflict.nvim', version = "*", config = true },
     { 
 	'nvim-lualine/lualine.nvim',
 	dependencies = { 'nvim-tree/nvim-web-devicons' }
     },
-    { 'shaunsingh/nord.nvim'},
+    -- { 'shaunsingh/nord.nvim'},
+    { "ellisonleao/gruvbox.nvim", priority = 1000 , config = true, opts = ...},
+    { "echasnovski/mini.align", version = false, opts = {} },
 })
 
 require("skel-nvim").setup{
@@ -237,4 +259,15 @@ require('lualine').setup {
   inactive_sections = {
     lualine_c = {'filename'},
   },
+}
+
+-- Define custom highlight groups for git-conflict
+vim.api.nvim_set_hl(0, 'GitConflictIncoming', { bg = '#90EE90', fg = '#000000' })  -- Light green background, black foreground
+vim.api.nvim_set_hl(0, 'GitConflictCurrent', { bg = '#9370DB', fg = '#000000' })   -- Purple background, black foreground
+
+require('git-conflict').setup {
+  highlights = {
+    incoming = 'GitConflictIncoming',
+    current = 'GitConflictCurrent',
+  }
 }
