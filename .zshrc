@@ -18,6 +18,14 @@ exitstatus()
     fi
 }
 
+git_branch() {
+  local branch
+  branch=$(git symbolic-ref --short HEAD 2>/dev/null) \
+    || branch=$(git rev-parse --short HEAD 2>/dev/null) \
+    || return
+  print "$branch"
+}
+
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color|*-256color) color_prompt=yes;;
@@ -34,9 +42,10 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 if [ "$color_prompt" = yes ]; then
-    GREEN="$(tput setaf 2)"
-    RESET="$(tput sgr0)"
-    precmd() { print -rP "%m ${GREEN}%~${RESET}" }
+    GREEN=$'\033[38;2;80;250;123m'
+    MAGENTA=$'\033[38;2;255;121;198m'
+    RESET=$'\033[0m'
+    precmd() { print -rP "%m ${GREEN}%~ ${MAGENTA}$(git_branch)${RESET}" }
     PS1="$(exitstatus) "
     
 else
@@ -74,16 +83,17 @@ alias cc='g++ -Wall \
 alias gocp="cd $HOME/github.com/competitive-programming/CF"
 alias swapx="mv -v $HOME/.xinitrc $HOME/.temp.xinitrc && mv -v $HOME/.other.xinitrc $HOME/.xinitrc && mv -v $HOME/.temp.xinitrc $HOME/.other.xinitrc"
 
+cd() {
+    # Call the actual builtin 'cd' with arguments, return if it fails
+    builtin cd "$@" || return $?
+    proj_root=$(git rev-parse --show-toplevel 2>/dev/null) || proj_root="$HOME"
+    echo "${proj_root}/note.md" > /tmp/proj-note
+}
+
 f() {
     project="$HOME/github.com"
 
-    if [[ -z "$1" ]]; then
-        $EDITOR "$project/$(ls  "$project" | fzf)"
-    elif [[ "$1" == "qw" ]]; then
-        $EDITOR "$project/qualiva-space-web"
-    elif [[ "$1" == "qc" ]]; then
-        $EDITOR "$project/qualiva-space-core-service"
-    fi
+    cd "$project/$(ls  "$project" | fzf)"
 }
 
 mkcd() {
@@ -92,13 +102,14 @@ mkcd() {
 
 # export GOPATH="$XDG_DATA_HOME/go"
 export PATH="$PATH:$HOME/.config/emacs/bin/"
-export PATH="$HOME/.cache/.bun/bin:$PATH"
+export PATH="$HOME/.bun/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/.local/share/gem/ruby/3.4.0/bin"
-export PATH="$PATH:/home/ionize13/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 
-command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd --shell zsh)"
+command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd --version-file-strategy recursive --shell zsh)"
 command -v toilet &> /dev/null && toilet -f Cybermedium --rainbow "It's just
 earthly things."
 command -v fzf &> /dev/null && source <(fzf --zsh)
