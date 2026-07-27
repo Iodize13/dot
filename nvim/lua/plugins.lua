@@ -192,6 +192,7 @@ require("lazy").setup({
 	"akinsho/toggleterm.nvim", version = "*", config = true
     },
     { 'akinsho/git-conflict.nvim', version = "*", config = true },
+    { 'lewis6991/gitsigns.nvim' },
     { 
 	'nvim-lualine/lualine.nvim',
 	dependencies = { 'nvim-tree/nvim-web-devicons' }
@@ -270,4 +271,37 @@ require('git-conflict').setup {
     incoming = 'GitConflictIncoming',
     current = 'GitConflictCurrent',
   }
+}
+
+vim.api.nvim_set_hl(0, 'GitSignsCurrentLineBlame', { fg = '#928374', italic = true })
+
+require('gitsigns').setup {
+  current_line_blame = true,
+  current_line_blame_opts = {
+    delay = 300,
+  },
+  on_attach = function(bufnr)
+    local gitsigns = require('gitsigns')
+    local function map(mode, l, r, desc)
+      vim.keymap.set(mode, l, r, { buffer = bufnr, desc = desc })
+    end
+
+    map('n', ']c', function()
+      if vim.wo.diff then return ']c' end
+      vim.schedule(gitsigns.next_hunk)
+      return '<Ignore>'
+    end, 'Next hunk')
+
+    map('n', '[c', function()
+      if vim.wo.diff then return '[c' end
+      vim.schedule(gitsigns.prev_hunk)
+      return '<Ignore>'
+    end, 'Prev hunk')
+
+    map('n', '<leader>gb', gitsigns.toggle_current_line_blame, 'Toggle line blame')
+    map('n', '<leader>gB', function() gitsigns.blame_line({ full = true }) end, 'Blame line (full)')
+    map('n', '<leader>gp', gitsigns.preview_hunk, 'Preview hunk')
+    map('n', '<leader>gr', gitsigns.reset_hunk, 'Reset hunk')
+    map('n', '<leader>gs', gitsigns.stage_hunk, 'Stage hunk')
+  end,
 }
