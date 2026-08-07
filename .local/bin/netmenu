@@ -1,0 +1,90 @@
+#!/bin/sh
+# dmenu-driven Wi-Fi switcher: pick an SSID, connect, done.
+# Replaces "kitty -e nmtui" for the common case of a couple of keypresses.
+
+DMENU="dmenu -i -l 15 -p wifi:"
+
+notify() {
+    notify-send -a netmenu "$1" "$2"
+}
+
+DEV=$(nmcli -t -f DEVICE,TYPE dev status | awk -F: '$2=="wifi"{print $1; exit}')
+if [ -z "$DEV" ]; then
+    notify "netmenu" "No Wi-Fi device found"
+    exit 1
+fi
+
+RADIO=$(nmcli radio wifi)
+ACTIVE_SSID=$(nmcli -t -f ACTIVE,SSID dev wifi list ifname "$DEV" | awk -F: '$1=="yes"{print $2; exit}')
+
+build_list() {
+    if [ "$RADIO" = "enabled" ]; then
+        printf '[toggle wifi off]\n[rescan]\n'
+    else
+        printf '[toggle wifi on]\n'
+    fi
+    [ -n "$ACTIVE_SSID" ] && printf '[disconnect: %s]\n' "$ACTIVE_SSID"
+
+    nmcli -t -f ACTIVE,SSID,SECURITY,SIGNAL dev wifi list ifname "$DEV" \
+        | awk -F: '{
+            ssid=$2
+            if (ssid == "") next
+            sec = ($3 == "") ? "open" : "secured"
+            sig = $4 + 0
+            key = ssid SUBSEP sec
+            if (!(key in seen) || sig > best[key]) {
+                seen[key] = 1
+                best[key] = sig
+                line[key] = (($1=="yes")?"* ":"  ") ssid "\t" sec "\t" sig "%"
+            }
+        }
+        END { for (k in line) print line[k] }' \
+        | sort -t$'\t' -k3 -rn | cut -f1-2 | column -t -s $'\t'
+}
+
+CHOICE=$(build_list | $DMENU)
+[ -z "$CHOICE" ] && exit 0
+
+case "$CHOICE" in
+    "[toggle wifi off]")
+        nmcli radio wifi off
+        notify "netmenu" "Wi-Fi turned off"
+        exit 0
+        ;;
+    "[toggle wifi on]")
+        nmcli radio wifi on
+        notify "netmenu" "Wi-Fi turned on"
+        exit 0
+        ;;
+    "[rescan]")
+        nmcli dev wifi rescan ifname "$DEV" 2>/dev/null
+        exec "$0"
+        ;;
+    "[disconnect: "*)
+        nmcli dev disconnect "$DEV" >/dev/null 2>&1
+        notify "netmenu" "Disconnected"
+        exit 0
+        ;;
+esac
+
+SSID=$(printf '%s' "$CHOICE" | sed 's/^\* //' | awk -F'  +' '{print $1}')
+SECURED=$(printf '%s' "$CHOICE" | grep -q 'secured' && echo 1 || echo 0)
+
+# Already have a saved profile for this SSID? Just bring it up.
+PROFILE=$(nmcli -t -f NAME,TYPE con show | awk -F: -v s="$SSID" '$2=="802-11-wireless" && $1==s{print $1; exit}')
+
+if [ -n "$PROFILE" ]; then
+    OUT=$(nmcli con up "$PROFILE" ifname "$DEV" 2>&1)
+elif [ "$SECURED" = "1" ]; then
+    PASS=$(printf '' | dmenu -P -p "password for $SSID:")
+    [ -z "$PASS" ] && exit 0
+    OUT=$(nmcli dev wifi connect "$SSID" password "$PASS" ifname "$DEV" 2>&1)
+else
+    OUT=$(nmcli dev wifi connect "$SSID" ifname "$DEV" 2>&1)
+fi
+
+if [ $? -eq 0 ]; then
+    notify "netmenu" "Connected to $SSID"
+else
+    notify "netmenu failed" "$OUT"
+fi
