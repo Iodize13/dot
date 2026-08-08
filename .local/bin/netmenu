@@ -15,7 +15,7 @@ if [ -z "$DEV" ]; then
 fi
 
 RADIO=$(nmcli radio wifi)
-ACTIVE_SSID=$(nmcli -t -f ACTIVE,SSID dev wifi list ifname "$DEV" | awk -F: '$1=="yes"{print $2; exit}')
+ACTIVE_SSID=$(nmcli -t -f ACTIVE,SSID dev wifi list --rescan no ifname "$DEV" | awk -F: '$1=="yes"{print $2; exit}')
 
 build_list() {
     if [ "$RADIO" = "enabled" ]; then
@@ -25,7 +25,7 @@ build_list() {
     fi
     [ -n "$ACTIVE_SSID" ] && printf '[disconnect: %s]\n' "$ACTIVE_SSID"
 
-    nmcli -t -f ACTIVE,SSID,SECURITY,SIGNAL dev wifi list ifname "$DEV" \
+    nmcli -t -f ACTIVE,SSID,SECURITY,SIGNAL dev wifi list --rescan no ifname "$DEV" \
         | awk -F: '{
             ssid=$2
             if (ssid == "") next
@@ -57,7 +57,9 @@ case "$CHOICE" in
         exit 0
         ;;
     "[rescan]")
+        notify "netmenu" "Scanning..."
         nmcli dev wifi rescan ifname "$DEV" 2>/dev/null
+        sleep 2
         exec "$0"
         ;;
     "[disconnect: "*)
@@ -67,7 +69,9 @@ case "$CHOICE" in
         ;;
 esac
 
-SSID=$(printf '%s' "$CHOICE" | sed 's/^\* //' | awk -F'  +' '{print $1}')
+# first 2 chars are always the marker ("* " or "  "); strip before splitting
+# on 2+ spaces, else an inactive entry's leading spaces get eaten as a delimiter
+SSID=$(printf '%s' "$CHOICE" | cut -c3- | awk -F'  +' '{print $1}')
 SECURED=$(printf '%s' "$CHOICE" | grep -q 'secured' && echo 1 || echo 0)
 
 # Already have a saved profile for this SSID? Just bring it up.
