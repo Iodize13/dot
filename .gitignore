@@ -20,6 +20,9 @@
 !applications/video.desktop
 !discord/settings.json
 !xorg/00-keyboard.conf
+!waterfox/
+!waterfox/waterfox.cfg
+!waterfox/local-settings.js
 !zed/
 !zed/settings.json
 !.config/
