@@ -1,0 +1,2 @@
+#!/bin/sh
+exec hermes -p openspec-review -s openspec-workflow -s openspec-change-reviewer "$@"

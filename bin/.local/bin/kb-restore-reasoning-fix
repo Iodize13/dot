@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Re-applies reasoning_content patch for opencode-go + kb engine.
+# Run after `pi update` if kb tasks start failing with reasoning errors.
+set -euo pipefail
+
+PATCHED="$HOME/.local/share/kb-patches/openai-completions.js.patched"
+TARGET="$HOME/.pi/agent/npm/node_modules/@mariozechner/pi-ai/dist/providers/openai-completions.js"
+
+if [ ! -f "$PATCHED" ]; then
+    echo "Patched backup not found at $PATCHED"
+    echo "Run: kb-save-reasoning-fix  to save the current patched state first."
+    exit 1
+fi
+
+cp "$PATCHED" "$TARGET"
+echo "✓ Reasoning patch restored to $TARGET"
+echo "  Restart kb dashboard to apply: pkill -f 'kb dashboard' && kb dashboard &"

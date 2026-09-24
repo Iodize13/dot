@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# src: https://www.youtube.com/watch?v=SRqVuAUP2N0
+wall=$(find ~/pix/wall/ -type f -name "*.jpg" -o -name "*.png" | shuf -n 1)
+
+# generate color scheme (skip wal's wallpaper setter, xwallpaper handles it)
+wal -c
+wal -i $wall -n
+xwallpaper --zoom $wall
+
+# sync sxbar colours with the new pywal scheme and restart it
+# . ~/.cache/wal/colors.sh
+# sed -i \
+#     -e "s/^\(background_colour[[:space:]]*:[[:space:]]*\).*/\1$background/" \
+#     -e "s/^\(foreground_colour[[:space:]]*:[[:space:]]*\).*/\1$foreground/" \
+#     -e "s/^\(border_colour[[:space:]]*:[[:space:]]*\).*/\1$color4/" \
+#     -e "s/^\(workspaces\.active_background[[:space:]]*:[[:space:]]*\).*/\1$color1/" \
+#     -e "s/^\(workspaces\.active_foreground[[:space:]]*:[[:space:]]*\).*/\1$background/" \
+#     -e "s/^\(workspaces\.inactive_background[[:space:]]*:[[:space:]]*\).*/\1$background/" \
+#     -e "s/^\(workspaces\.inactive_foreground[[:space:]]*:[[:space:]]*\).*/\1$foreground/" \
+#     -e "s/^\(workspaces\.occupied_indicator_colour[[:space:]]*:[[:space:]]*\).*/\1$color1/" \
+#     ~/sxbar/sxbarc
+
+# pkill -x sxbar
+# setsid sxbar >/dev/null 2>&1 &
+xdotool key super+F5

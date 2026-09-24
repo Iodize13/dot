@@ -1,0 +1,21 @@
+#!/bin/sh
+# LINE messenger via Wine (Kron4ek staging build, dedicated win64 prefix)
+export WINEPREFIX="$HOME/.local/share/wineprefixes/line"
+export WINEDLLOVERRIDES="mscoree,mshtml="
+export WINEDEBUG=-all
+WINEBIN="$HOME/.local/opt/wine-11.14-staging-amd64-wow64/bin/wine"
+
+# input methods (fcitx5/ibus) — Wine needs these to see the system IME
+export GTK_IM_MODULE="${GTK_IM_MODULE:-fcitx}"
+export QT_IM_MODULE="${QT_IM_MODULE:-fcitx}"
+export XMODIFIERS="${XMODIFIERS:-@im=fcitx}"
+
+for exe in \
+  "$WINEPREFIX/drive_c/users/$USER/AppData/Local/LINE/bin/current/LINE.exe" \
+  "$WINEPREFIX/drive_c/Program Files (x86)/LINE/bin/LineLauncher.exe" \
+  "$WINEPREFIX/drive_c/Program Files/LINE/bin/LineLauncher.exe" ; do
+  [ -f "$exe" ] && exec "$WINEBIN" "$exe" "$@"
+done
+
+echo "line: LINE.exe not found under $WINEPREFIX" >&2
+exit 1

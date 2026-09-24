@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Debug: log that script was triggered and environment
+echo "$(date): SCRIPT RUN args='$*' HOME='$HOME' DISPLAY='$DISPLAY' PULSE_SERVER='$PULSE_SERVER' PULSE_RUNTIME_PATH='$PULSE_RUNTIME_PATH'" >> /tmp/dunst-alert.log 2>&1
+
+# Use $HOME instead of ~ since systemd services may not expand tilde
+paplay "$HOME/Music/samsung-noti.opus" >> /tmp/dunst-alert.log 2>&1

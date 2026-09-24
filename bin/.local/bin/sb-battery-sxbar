@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Battery percentage for sxbar: drops the status icon used by sb-battery
+# (sxbar has no font fallback for emoji) and instead colours the module
+# background -- light green while discharging, light red once low.
+
+GREEN='\002#90EE90'
+RED='\002#F08080'
+
+raw="$(sb-battery)"
+
+case "$raw" in
+	"🔋❗"*) printf "${RED}%s" "${raw#"🔋❗"}" ;;
+	"🔋"*)  printf "${GREEN}%s" "${raw#"🔋"}" ;;
+	*) printf '%s' "$raw" | sed -E 's/^[^0-9]+//' ;;
+esac

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Saves the current patched state of openai-completions.js
+set -euo pipefail
+
+TARGET="$HOME/.pi/agent/npm/node_modules/@mariozechner/pi-ai/dist/providers/openai-completions.js"
+DEST_DIR="$HOME/.local/share/kb-patches"
+DEST="$DEST_DIR/openai-completions.js.patched"
+
+mkdir -p "$DEST_DIR"
+
+if [ ! -f "$TARGET" ]; then
+    echo "Source not found: $TARGET"
+    exit 1
+fi
+
+cp "$TARGET" "$DEST"
+echo "✓ Patched file saved to $DEST"

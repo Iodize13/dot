@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# src: https://dev.to/anggakswr/automatically-monitor-and-manage-ram-usage-for-nextjs-development-24i
+# Usage: monitor_ram <project-directory>
+# RAM usage limit (percentage)
+LIMIT=90
+
+if [ -z "$1" ]; then
+    echo "Error: No project directory specified" >&2
+    echo "Usage: monitor_ram <project-directory>" >&2
+    exit 1
+fi
+
+# Function to get current RAM usage
+get_ram_usage() {
+    free | awk '/Mem:/ {printf "%.0f", $3/$2 * 100}'
+}
+
+cd "$1" || exit 1
+
+start_dev() {
+    bun run dev:vite &
+    DEV_PID=$!
+}
+
+start_dev
+
+# Loop to monitor RAM periodically
+while true; do
+    RAM_USAGE=$(get_ram_usage)
+    if [ "$RAM_USAGE" -ge "$LIMIT" ]; then
+        printf 'RAM has reached the limit of %s%%. Restarting dev server.\n' "$LIMIT"
+	kill -INT "$DEV_PID" 2>/dev/null
+        wait "$DEV_PID" 2>/dev/null  # Let it finish cleanup before restarting
+	start_dev
+    fi
+    sleep 5  # Check every 5 seconds
+done
+
+# interesting read: https://tohju.com/posts/nextjs-is-too-slow-how-to-fix-high-memory-issues-and-crashes/
+# look like already handle natively: https://stackoverflow.com/questions/76989796/limit-ram-usage-of-nextjs-when-run-dev
