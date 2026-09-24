@@ -3,3 +3,16 @@ on   = "<C-s>"
 for  = "unix"
 run  = 'shell "$SHELL" --block'
 desc = "Open $SHELL here"
+
+# --- drag & drop that survives tmux (dragon-drop, GUI helper) ---
+[[mgr.prepend_keymap]]
+on   = "<C-g>"
+for  = "unix"
+run  = 'shell -- dragon-drop -x -i -T -a "$@"'
+desc = "Drag selected files out"
+
+[[mgr.prepend_keymap]]
+on   = "<C-t>"
+for  = "unix"
+run  = 'shell -- dragon-drop -t -x -p | while IFS= read -r f; do cp -r -- "$f" .; done'
+desc = "Drop files into this directory"

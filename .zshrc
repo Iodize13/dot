@@ -67,10 +67,10 @@ alias cl=clear
 alias cp="cp -vi"
 alias mv="mv -vi"
 alias sy="sudo systemctl"
-alias vim=nvim
+alias v=nvim
 
 alias c='g++ -Wall -Wconversion -Wshadow -Wfatal-errors -g \
--std=c++20 -fsanitize=undefined,address -Wl,-z,stack-size=10000000 -I$HOME/github.com/competitive-programming/.template'
+-std=c++17 -fsanitize=undefined,address -Wl,-z,stack-size=10000000 -I$HOME/github.com/Iodize13/competitive-programming/.template'
 alias cc='g++ -Wall \
     -Wconversion \
     -Wfatal-errors \
@@ -100,10 +100,51 @@ mkcd() {
     mkdir -p "$1" && cd "$1"
 }
 
+# Run a command with a memory cap (default 2G) and CPU timeout (default 10s)
+# so a buggy competitive-programming solution (infinite loop / unbounded
+# allocation) can't swap the whole laptop to death. Usage: run ./a.out < in
+# Uses a cgroup (systemd-run --scope) rather than `ulimit -v`, since ulimit -v
+# caps virtual address space and breaks ASan (which reserves huge shadow
+# memory ranges of virtual space that are never actually resident).
+# MemorySwapMax=0 forces a real OOM-kill on hitting the cap instead of
+# swapping to stay under it (swapping just reintroduces the slowdown).
+run() {
+    local mem=${RUN_MEM:-2G}
+    local secs=${RUN_TIMEOUT:-10}
+    local unit="cprun-$$-$RANDOM"
+    timeout "$secs" systemd-run --user --scope -q --unit="$unit" \
+        -p MemoryMax="$mem" -p MemorySwapMax=0 -- "$@"
+    local rc=$?
+    if [[ $rc -eq 124 ]]; then
+        echo "[run] killed: exceeded ${secs}s timeout (RUN_TIMEOUT) -- program did not finish" >&2
+    elif [[ $rc -eq 137 ]]; then
+        local tries=0 oomed=""
+        while [[ $tries -lt 10 ]]; do
+            journalctl --user -u "${unit}.scope" --no-pager 2>/dev/null | grep -q oom-kill && { oomed=1; break; }
+            sleep 0.1
+            (( tries++ ))
+        done
+        if [[ -n $oomed ]]; then
+            echo "[run] killed: exceeded ${mem} memory limit (RUN_MEM) -- program did not finish" >&2
+        else
+            echo "[run] killed by SIGKILL (not from timeout; memory-limit cause unconfirmed)" >&2
+        fi
+    fi
+    return $rc
+}
+
 # export GOPATH="$XDG_DATA_HOME/go"
+
+# /mnt/sdb is a failing drive (ext4 forced it emergency_ro after unrecoverable
+# read errors). GOMODCACHE defaulted to $HOME/go/pkg/mod -> /mnt/sdb/go/pkg/mod,
+# which made every `go build` crawl. GOENV also landed there because
+# XDG_CONFIG_HOME is $HOME, so `go env -w` could not write. Pin both to sda5.
+export GOENV="$HOME/.config/go/env"
+export GOPATH="$HOME/.cache-local/go"          # was $HOME/go -> /mnt/sdb
+export GOMODCACHE="$GOPATH/pkg/mod"            # also fixes $GOPATH/pkg/sumdb writes
 export PATH="$PATH:$HOME/.config/emacs/bin/"
 export PATH="$HOME/.bun/bin:$PATH"
-export PATH="$HOME/go/bin:$PATH"
+export PATH="$HOME/.cache-local/go/bin:$HOME/go/bin:$PATH"
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/.local/share/gem/ruby/3.4.0/bin"
 export PATH="$PATH:$HOME/.local/bin"
@@ -115,3 +156,14 @@ earthly things."
 command -v fzf &> /dev/null && source <(fzf --zsh)
 command -v direnv &> /dev/null && eval "$(direnv hook zsh)"
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Route GTK file dialogs through xdg-desktop-portal (yazi file picker)
+export GTK_USE_PORTAL=1
+export GDK_DEBUG=portals  # GTK4 equivalent
+export QT_QPA_PLATFORMTHEME=xdgdesktopportal  # Qt6 -> portal file dialogs
+
+# >>> grok installer >>>
+export PATH="$HOME/.grok/bin:$PATH"
+fpath=(~/.grok/completions/zsh $fpath)
+autoload -Uz compinit && compinit -C
+# <<< grok installer <<<

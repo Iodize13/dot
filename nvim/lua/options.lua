@@ -1,5 +1,6 @@
 vim.opt.completeopt = {'menu', 'menuone', 'noselect'}
 vim.opt.mouse = 'a'                 -- allow the mouse to be used in nvim
+vim.opt.clipboard = "unnamedplus"
 
 -- Tab
 vim.opt.shiftwidth = 4              -- insert 4 spaces on a tab
@@ -26,7 +27,12 @@ vim.opt.makeprg="g++ -Wall -Wconversion -Wshadow -Wfatal-errors -DLOCAL -g -std=
 
 vim.api.nvim_create_autocmd("BufEnter", {
     pattern = "note.md",
-    command = ":norm Go",
+    command = ":norm Gi",
+})
+
+vim.api.nvim_create_autocmd("BufWritePost", {
+    pattern = vim.fn.expand("~") .. "/.local/src/dwmblocks/blocks.h",
+    command = "!cd ~/.local/src/dwmblocks/; sudo make install && { killall -q dwmblocks; setsid -f dwmblocks; }",
 })
 
 vim.opt.foldmethod = "expr"

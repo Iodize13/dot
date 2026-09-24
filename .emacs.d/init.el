@@ -1,9 +1,9 @@
 (setopt custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
-  (load custom-file))
+   (load custom-file))
 
-(defvar my/default-font-size 130)
-(defvar my/default-variable-font-size 130)
+(defvar my/default-font-size 162)
+(defvar my/default-variable-font-size 162)
 
 (setopt inhibit-startup-message t)
 (menu-bar-mode 0)
@@ -19,7 +19,7 @@
 ;; mwheel-scroll only uses mouse-wheel-scroll-amount-horizontal when
 ;; shift is held.
 (advice-add 'mwheel-scroll :around
-            (lambda (orig-fun event &optional arg)
+	    (lambda (orig-fun event &optional arg)
               (let ((button (event-basic-type event)))
                 (if (memq button '(mouse-6 mouse-7 wheel-left wheel-right))
                     (let ((mouse-wheel-scroll-amount
@@ -118,7 +118,7 @@
 
 ;; src: https://emacsredux.com/blog/2026/04/07/stealing-from-the-best-emacs-configs/
 (setq-default bidi-display-reordering 'left-to-right
-              bidi-paragraph-direction 'left-to-right)
+	      bidi-paragraph-direction 'left-to-right)
 (setopt bidi-inhibit-bpa t)
 (setopt redisplay-skip-fontification-on-input t)
 (setq-default cursor-in-non-selected-windows nil)
@@ -129,7 +129,7 @@
 
 ;; (require 'color)
 (defun my/load-pywal-colors ()
-  "Load accent colors from pywal and apply to UI faces efficiently."
+   "Load accent colors from pywal and apply to UI faces efficiently."
   (interactive)
   (let* ((wal-file (expand-file-name "~/.cache/wal/colors"))
 	 (colors (when (file-exists-p wal-file)
@@ -180,9 +180,9 @@
  version-control t)
 
 (setopt package-archives
-	'(("melpa" . "https://melpa.org/packages/")
-	  ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-	  ("elpa" . "https://elpa.gnu.org/packages/")))
+		'(("melpa" . "https://melpa.org/packages/")
+		  ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+		  ("elpa" . "https://elpa.gnu.org/packages/")))
 ;; Pin simple-httpd to a version compatible with clomacs 20220415.
 ;; Version 20260519+ breaks ejc-sql with "bufferp, #<process httpd>".
 ;; (setq package-pinned-packages '((simple-httpd . "20201102.1452")))
@@ -192,18 +192,40 @@
 (use-package gnu-elpa-keyring-update)
 ;; copy kulala key
 (use-package org :load-path "~/.emacs.d/elpa/org-mode/lisp/"
-  :config (define-key org-mode-map (kbd "C-c r") verb-command-map))
+   :config
+  (define-key org-mode-map (kbd "C-c r") verb-command-map)
+  ;; https://www.youtube.com/watch?v=PNE-mgkZ6HM
+  (setq org-log-done 'time)
+  (require 'org-tempo)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((sql . t)))
+  (setq org-confirm-babel-evaluate nil)
+  )
+;; Pre-load org-capture at startup: the first `org-capture' call in a
+;; fresh daemon hits a load-order bug in this org-mode build where
+;; `org-capture-templates' is referenced before its defcustom runs,
+;; signalling void-variable and aborting `yequake-org-capture' silently.
+(require 'org-capture)
+(setopt org-capture-templates
+	'(("t" "tasks" entry (file "~/note.org")
+           "* TODO %?\t  %U")))
 (setopt org-tag-alist
-	'(("Qualiva" . ?q))
+		'(("Qualiva" . ?q)
+		  ("Blog" . ?b)
+		  ("Shopping" . ?s)
+		  ("Agentic" . ?v)
+		  ("Univerisity". ?u))
 	)
 (setopt org-agenda-files '("~/note.org"))
+(add-hook 'org-capture-mode-hook #'evil-insert-state)
 
 (use-package verb)
 ;; hs-toggle-hiding uses `posn-set-point' from mouse events, which
 ;; moves point unpredictably when called from the keyboard.  Drop
 ;; the event handling so toggle works from anywhere in the block.
 (defun my/hs-toggle-hiding ()
-  "Toggle hiding/showing of a block.  Works from anywhere in the block."
+   "Toggle hiding/showing of a block.  Works from anywhere in the block."
   (interactive)
   (if (hs-already-hidden-p)
       (hs-show-block)
@@ -211,7 +233,7 @@
 
 (use-package general)
 (use-package evil
-  :demand t
+   :demand t
   :bind (("<escape>" . keyboard-escape-quit))
   :init
   ;; allows for using cgn
@@ -239,7 +261,7 @@
     "z a" 'my/hs-toggle-hiding)
   )
 (add-hook 'after-save-hook
-          #'executable-make-buffer-file-executable-if-script-p)
+	  #'executable-make-buffer-file-executable-if-script-p)
 
 ;; C-a for vim increment
 ;; src: https://www.reddit.com/r/emacs/comments/uwk9kx/make_q_or_wq_not_killl_emacs_in_evil_mode/
@@ -247,7 +269,7 @@
 (defun kill-this-buffer()(interactive)(kill-current-buffer))
 
 (use-package move-text
-  :config
+   :config
   (defun my/move-text-and-indent (direction)
     "Moves the region and re-indents."
     (let ((deactivate-mark nil)) ; Keeps the region highlighted after moving
@@ -264,7 +286,7 @@
 
 ;; (evil-ex-define-cmd "q" 'kill-current-buffer)
 (use-package evil-collection
-  :after evil
+   :after evil
   :config
   (setopt evil-want-integration t)
   ;; (setopt evil-want-minibuffer t)
@@ -272,7 +294,7 @@
   ;; (setopt evil-collection-mode-list '(magit process list))
   (evil-collection-init))
 (use-package evil-little-word
-  :after evil
+   :after evil
   :init
   (unless (file-exists-p (expand-file-name "site-lisp/evil-plugins/" user-emacs-directory))
     (shell-command
@@ -293,12 +315,12 @@
 	      ("b" . evil-backward-little-word-begin)
 	      ))
 (use-package evil-commentary
-  :init
+   :init
   (evil-commentary-mode))
 (use-package evil-numbers
-  :vc (:url "https://github.com/cofi/evil-numbers"
-            :rev :newest
-            :branch "master")
+   :vc (:url "https://github.com/cofi/evil-numbers"
+             :rev :newest
+             :branch "master")
   :general
   (general-def '(normal visual) :prefix "C-c"
     "=" 'evil-numbers/inc-at-pt
@@ -331,23 +353,28 @@
   ;; :config
   ;; (setopt vterm-ignore-blink-cursor t)
   :general-config
-  (general-def 'emacs :keymaps 'vterm-mode-map 
+  ;; vterm buffers are in evil `insert' state (not `emacs' state, despite
+  ;; the `evil-emacs-state' hook below - evil-collection's vterm setup
+  ;; resets it to insert), so a `general-def 'emacs' binding here is never
+  ;; active. Bind directly in `vterm-mode-map' so it applies regardless of
+  ;; evil state.
+  (general-def :keymaps 'vterm-mode-map
     "C-w" (lambda () (interactive) (vterm-send-key (kbd "C-w")))
-    "C-S-v" 'yank))
+    "C-S-v" #'vterm-yank))
 (add-hook 'vterm-mode-hook #'evil-emacs-state nil)
 
 (use-package olivetti)
 (use-package treemacs
-  :hook
+   :hook
   (treemacs-mode . (lambda () (display-line-numbers-mode -1)))
   :config
   (setopt treemacs-width 30)
   (setopt treemacs-indentation 1))
 (with-eval-after-load 'lsp-treemacs
-  (setopt lsp-treemacs-errors-position-params 
-          '((side . bottom) 
-            (slot . 1) 
-            (window-height . 0.35)))
+   (setopt lsp-treemacs-errors-position-params
+           '((side . bottom)
+             (slot . 1)
+             (window-height . 0.35)))
   (defun my/lsp-treemacs-errors-list--goto-current-file (orig-fun &rest args)
     "Call ORIG-FUN, move point to the current file's errors."
     (interactive)
@@ -381,7 +408,7 @@
 (treemacs-load-theme "all-the-icons")
 (use-package treemacs-evil)
 (use-package dirvish
-  :init
+   :init
   (dirvish-override-dired-mode)
   :hook
   (dired-mode . (lambda () (display-line-numbers-mode -1)))
@@ -406,14 +433,14 @@
   )
 
 (dirvish-define-preview ls (file)
-  "Use `ls' to generate directory preview."
+   "Use `ls' to generate directory preview."
   (when (file-directory-p file)
     `(shell . ("ls" "-a1" "--color=always" "--group-directories-first" ,file))))
 (push 'ls dirvish-preview-dispatchers)
 
 (use-package all-the-icons)
 (use-package gruvbox-theme
-  :init
+   :init
   (load-theme 'gruvbox)
   ;; :custom-face
   ;; (font-lock-comment-face ((t (:slant italic))))
@@ -491,7 +518,7 @@
 ;; (add-hook 'mu4e-compose-mode-hook #'my/mu4e--gruvboxify-buffer)
 ;; src: https://kristofferbalintona.me/posts/202206071000/
 ;; #b8bb26
-(add-to-list 'default-frame-alist '(alpha-background . 88))
+;; (add-to-list 'default-frame-alist '(alpha-background . 88))
 ;; (use-package doom-modeline
 ;;   :config
 ;;   (progn
@@ -501,15 +528,15 @@
 ;;   :init (doom-modeline-mode 1)
 ;;   )
 (use-package powerline
-  :config
+   :config
   (setq powerline-default-separator nil))
 (defface powerline-active0-modified
-  '((t (:foreground "#ffaf00")))
+   '((t (:foreground "#ffaf00")))
   "Powerline face for modified buffers."
   :group 'powerline)
 
 (defun powerline-jr0cket-theme ()
-  "Customisation of the default powerline theme"
+   "Customisation of the default powerline theme"
   (interactive)
   (setq-default mode-line-format
 		'("%e"
@@ -570,7 +597,7 @@
 
 					; src: https://github.com/daviwil/emacs-from-scratch
 (defun my/lsp-mode-setup ()
-  ;; (setopt lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+   ;; (setopt lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (setopt gc-cons-threshold 100000000)
   (setopt read-process-output-max (* 1024 1024)) ;; 1mb
   ;; (lsp-headerline-breadcrumb-mode)
@@ -581,17 +608,17 @@
 ;; (use-package eglot
 ;;   :ensure nil)
 (use-package treesit
-  :mode (("\\.js\\'"  . typescript-ts-mode)
-         ("\\.mjs\\'" . typescript-ts-mode)
-         ("\\.mts\\'" . typescript-ts-mode)
-         ("\\.cjs\\'" . typescript-ts-mode)
-         ("\\.ts\\'"  . typescript-mode)
-         ("\\.jsx\\'" . tsx-ts-mode)
-         ("\\.json\\'" .  json-ts-mode)
-         ("\\.Dockerfile\\'" . dockerfile-ts-mode)
-         ("\\.prisma\\'" . prisma-ts-mode)
-         ;; More modes defined here...
-         )
+   :mode (("\\.js\\'"  . typescript-ts-mode)
+          ("\\.mjs\\'" . typescript-ts-mode)
+          ("\\.mts\\'" . typescript-ts-mode)
+          ("\\.cjs\\'" . typescript-ts-mode)
+          ("\\.ts\\'"  . typescript-mode)
+          ("\\.jsx\\'" . tsx-ts-mode)
+          ("\\.json\\'" .  json-ts-mode)
+          ("\\.Dockerfile\\'" . dockerfile-ts-mode)
+          ("\\.prisma\\'" . prisma-ts-mode)
+          ;; More modes defined here...
+          )
   :preface
   (defun os/setup-install-grammars ()
     "Install Tree-sitter grammars if they are absent."
@@ -647,13 +674,13 @@
   (os/setup-install-grammars))
 
 (use-package tsx-mode
-  :load-path "site-lisp/tsx-mode"
+   :load-path "site-lisp/tsx-mode"
   :mode ("\\.tsx\\'" . tsx-mode)
   :hook ((tsx-mode . lsp-deferred)
          (tsx-mode . treesit-fold-mode)))
 
 (use-package lsp-mode
-  ;; :commands (lsp lsp-deferred)
+   ;; :commands (lsp lsp-deferred)
   :hook ((lsp-mode . my/lsp-mode-setup)
 	 ((tsx-ts-mode
 	   typescript-ts-mode
@@ -683,18 +710,26 @@
   (lsp-register-custom-settings
    '(("typescript.tsdk" "node_modules/typescript/lib")
      ("typescript.tsserver.maxTsServerMemory" 2048)
-     ("vtsls.autoUseWorkspaceTsdk" t t))))
+     ("vtsls.autoUseWorkspaceTsdk" t t)))
+
+  ;; sqls (built into lsp-mode via lsp-sqls.el) gives schema-aware
+  ;; completion for table/column names, not just keywords. Auth is
+  ;; via the unix socket, matching the CLI's passwordless setup.
+  (setq lsp-sqls-connections
+        '(((driver . "mysql")
+           (dataSourceName . "ionize13@unix(/run/mysqld/mysqld.sock)/insee_6403_sql_part2_db")))))
+(add-hook 'sql-mode-hook #'lsp-deferred)
 
 ;; Also activate lsp for tree-sitter TSX buffers
 (dolist (mode '(tsx-ts-mode typescript-ts-mode js-ts-mode))
-  (add-hook (intern (format "%s-hook" mode)) #'lsp-deferred))
+   (add-hook (intern (format "%s-hook" mode)) #'lsp-deferred))
 
 (use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode)
+   :hook (lsp-mode . lsp-ui-mode)
   :custom
   (lsp-ui-doc-position 'at-point))
 (use-package lsp-treemacs
-  :after lsp
+   :after lsp
   :general
   (general-def 'normal :keymaps 'lsp-treemacs-mode-map
     ;; "q" 'treemacs-quit
@@ -704,7 +739,7 @@
   )
 
 (add-to-list 'display-buffer-alist
-             '("\\*xref\\*"
+	     '("\\*xref\\*"
                (display-buffer-in-side-window)
                (side . right)
                (window-width . 0.4)))
@@ -717,11 +752,11 @@
 ;; Workaround 1: wrap per-feature fontification to ignore individual query errors.
 ;; Workaround 2: prevent Emacs from disabling font-lock after query errors.
 (with-eval-after-load 'typescript-ts-mode
-  (defun my/treesit-fontify-tolerant (orig-fun &rest args)
-    "Call ORIG-FUN but ignore treesit-query-error (broken features)."
-    (condition-case nil
-        (apply orig-fun args)
-      (treesit-query-error nil)))
+   (defun my/treesit-fontify-tolerant (orig-fun &rest args)
+     "Call ORIG-FUN but ignore treesit-query-error (broken features)."
+     (condition-case nil
+         (apply orig-fun args)
+       (treesit-query-error nil)))
   (advice-add 'treesit--font-lock-fontify-region-1 :around
               #'my/treesit-fontify-tolerant)
   ;; Re-enable font-lock if Emacs disables it after errors.
@@ -737,26 +772,26 @@
   (add-hook 'font-lock-mode-hook #'my/ts-rearm-font-lock))
 
 (with-eval-after-load 'lsp-mode
-  (defun my/lsp-find-implementation-skip-single ()
-    "Find implementations. Jump directly if only one result, else show xref."
-    (interactive)
-    (let ((loc (lsp-request "textDocument/implementation"
-                            (lsp--text-document-position-params))))
-      (if (null loc)
-          (lsp--error "No implementations found for: %s"
-                      (or (thing-at-point 'symbol t) ""))
-        (if (null (cdr loc))
-            (progn
-              (unless (region-active-p) (push-mark nil t))
-              (xref-push-marker-stack)
-              (lsp-goto-location (car loc))
-              (with-selected-window (selected-window)
-                (recenter)))
-          (lsp-show-xrefs (lsp--locations-to-xref-items loc) nil t))))))
+   (defun my/lsp-find-implementation-skip-single ()
+     "Find implementations. Jump directly if only one result, else show xref."
+     (interactive)
+     (let ((loc (lsp-request "textDocument/implementation"
+                             (lsp--text-document-position-params))))
+       (if (null loc)
+           (lsp--error "No implementations found for: %s"
+                       (or (thing-at-point 'symbol t) ""))
+         (if (null (cdr loc))
+             (progn
+               (unless (region-active-p) (push-mark nil t))
+               (xref-push-marker-stack)
+               (lsp-goto-location (car loc))
+               (with-selected-window (selected-window)
+                 (recenter)))
+           (lsp-show-xrefs (lsp--locations-to-xref-items loc) nil t))))))
 
 
 (use-package go-mode
-  :init
+   :init
   (setenv "GOPATH" (expand-file-name "~/go"))
   (setenv "PATH" (concat (getenv "PATH") path-separator (expand-file-name "~/go/bin")))
   (add-to-list 'exec-path (expand-file-name "~/go/bin"))
@@ -783,7 +818,7 @@
     "SPC t p" 'treemacs-quit)
   )
 (defun my/go-abbreviate-imenu-label (label)
-  "Strip Go receiver notation from an imenu LABEL string.
+   "Strip Go receiver notation from an imenu LABEL string.
 Handles both LSP format '(*Type).Method' and go-mode format '(recv) Method(...)'.
 Both → just 'Method'."
   (if (stringp label)
@@ -798,7 +833,7 @@ Both → just 'Method'."
     label))
 
 (defun my/go-abbreviate-imenu-index (index)
-  "Recursively abbreviate Go receivers in imenu INDEX tree."
+   "Recursively abbreviate Go receivers in imenu INDEX tree."
   (cond
    ((null index) nil)
    ((consp index)
@@ -813,13 +848,13 @@ Both → just 'Method'."
    (t index)))
 
 (defun my/go-lsp-imenu-create-index (symbols)
-  "Create imenu from Go SYMBOLS, stripping pointer receivers.
+   "Create imenu from Go SYMBOLS, stripping pointer receivers.
 Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
   (my/go-abbreviate-imenu-index
    (lsp-imenu-create-uncategorized-index symbols)))
 
 (defun my/go-imenu-create-index-fallback ()
-  "Fallback imenu index for Go (non-LSP), using go-mode regex + receiver stripping."
+   "Fallback imenu index for Go (non-LSP), using go-mode regex + receiver stripping."
   (my/go-abbreviate-imenu-index
    (imenu--generic-function
     '(("type" "^type +\\([^ \t\n\r\f]+\\)" 1)
@@ -830,24 +865,24 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
 ;; `lsp-after-open-hook' fires after the LSP server initializes (and after
 ;; `lsp-enable-imenu' sets up `imenu-create-index-function').
 (add-hook 'lsp-after-open-hook
-          (lambda ()
+	  (lambda ()
             (when (derived-mode-p 'go-mode)
               (setq-local lsp-imenu-detailed-outline nil)
               (setq-local lsp-imenu-index-function #'my/go-lsp-imenu-create-index))))
 ;; Fallback for non-LSP Go buffers — set imenu-create-index-function.
 ;; Uses advice (not hook) to survive treemacs' hook suppression.
 (advice-add 'go-mode :after
-            (lambda ()
+	    (lambda ()
               (setq-local imenu-create-index-function #'my/go-imenu-create-index-fallback)))
 
 (use-package typescript-mode
-  :mode "\\.ts\\'"
+   :mode "\\.ts\\'"
   ;; :hook (typescript-mode . lsp-deferred)
   :hook (typescript-mode . lsp-deferred)
   :config
   (setopt typescript-indent-level 2))
 (use-package ansi-color
-  :ensure nil)
+   :ensure nil)
 (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter)
 
 ;; (use-package copilot
@@ -862,7 +897,7 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
 ;;   (setopt copilot-indent-offset-warning-disable t)
 ;;   )
 (use-package magit
-  ;; :hook
+   ;; :hook
   ;; (magit-mode . (lambda () (display-line-numbers-mode -1)))
   :config
   (defun my/enable-insert-and-copilot ()
@@ -871,17 +906,17 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
   (add-hook 'git-commit-setup-hook #'my/enable-insert-and-copilot)
   )
 (use-package smerge
-  :ensure nil
+   :ensure nil
   :general
   (general-def 'normal
     "g RET" 'smerge-keep-current))
 (use-package forge
-  :after magit
+   :after magit
   )
 (setq auth-sources '("~/.authinfo.gpg"))
 
 (use-package company
-  :after lsp-mode
+   :after lsp-mode
   :hook (lsp-mode . company-mode)
   :bind (:map company-active-map
               ("C-i" . company-complete-selection))
@@ -892,10 +927,10 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
   (company-minimum-prefix-length 1)
   (company-idle-delay 0.0))
 (use-package company-box
-  :hook (company-mode . company-box-mode))
+   :hook (company-mode . company-box-mode))
 
 (use-package vertico
-  :config (vertico-mode)
+   :config (vertico-mode)
   (setopt completion-ignore-case t)
   :general-config
   (general-def
@@ -905,7 +940,7 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
 
 (use-package consult)
 (use-package affe
-  :config
+   :config
   (defun my/affe-grep-at-point ()
     "Search with affe using word under cursor."
     (interactive)
@@ -934,7 +969,7 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
 ;;     (setq projectile-project-search-path '("~/github.com")))
 ;;   (setq projectile-switch-project-action #'projectile-dired))
 (use-package project
-  :ensure nil
+   :ensure nil
   :config
   (when (file-directory-p "~/github.com/")
     (setopt project-vc-extra-root-markers '(".git" ".dir-locals.el"))
@@ -958,13 +993,13 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
 (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
 
 (use-package orderless
-  :custom
+   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles partial-completion))))
   (completion-pcm-leading-wildcard t)) ;; Emacs 31: partial-completion behaves like substring
 
 (use-package colorful-mode
-  :custom
+   :custom
   (colorful-use-prefix t)
   (colorful-prefix-alignment 'right)
   (colorful-prefix-string " ")
@@ -975,7 +1010,7 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
 (use-package web-mode)
 
 (use-package blamer
-  :ensure t
+   :ensure t
   :general
   (general-def 'normal
     "C-c i" 'blamer-show-commit-info
@@ -984,17 +1019,17 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
   )
 
 (add-to-list 'display-buffer-alist
-             '("magit: .*" (display-buffer-same-window)))
+	     '("magit: .*" (display-buffer-same-window)))
 ;; Matches everything EXCEPT buffers starting with a space (internal emacs buffers)
 ;; (setq evil--jumps-buffer-targets "^[^ ].*")
 
 (defvar my/tunnel-buffer "*qualiva-tunnel*"
-  "Buffer for the SSH tunnel.")
+   "Buffer for the SSH tunnel.")
 (defvar my/tunnel-dir "~/github.com/qualiva/core/"
-  "Project directory for the tunnel.")
+   "Project directory for the tunnel.")
 
 (defun my/tunnel-start ()
-  "Start the SSH tunnel in a named buffer."
+   "Start the SSH tunnel in a named buffer."
   (interactive)
   (when (get-buffer-process my/tunnel-buffer)
     (error "Tunnel already running"))
@@ -1003,21 +1038,21 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
   (message "Tunnel started in %s" my/tunnel-buffer))
 
 (defun my/tunnel-stop ()
-  "Stop the SSH tunnel (SIGINT)."
+   "Stop the SSH tunnel (SIGINT)."
   (interactive)
   (if-let ((proc (get-buffer-process my/tunnel-buffer)))
       (progn (interrupt-process proc) (message "Tunnel stopped"))
     (message "No tunnel running")))
 
 (defun my/start-Go ()
-  "Start the Go backend dev server."
+   "Start the Go backend dev server."
   (interactive)
   (let ((compilation-buffer-name-function
          (lambda (_mode) "*Go-backend*")))
     (compile "make dev")))
 
 (defun my/start-Bun ()
-  "Start the Bun dev server with RAM monitoring, project-aware."
+   "Start the Bun dev server with RAM monitoring, project-aware."
   (interactive)
   (if-let ((proj (project-current)))
       (let* ((proj-name (project-name proj))
@@ -1031,24 +1066,24 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
     (message "Can't detect project")))
 
 (use-package exec-path-from-shell
-  :config
+   :config
   (exec-path-from-shell-initialize))
 (setopt exec-path-from-shell-arguments '("-l" "-c" "echo $PATH"))
 
 ;; GUI/daemon sessions may inherit TERM=dumb (especially under EXWM/SXWM),
 ;; which breaks terminal-backed packages that probe terminfo.
 (when (and (daemonp)
-           (or (not (getenv "TERM"))
+	   (or (not (getenv "TERM"))
                (string= (getenv "TERM") "dumb")))
   (setenv "TERM" "xterm-256color"))
 
 (use-package which-key
-  :config
+   :config
   (which-key-mode))
 (use-package git-timemachine)
 ;; src: https://systemcrafters.net/emacs-mail/
 (use-package mu4e
-  :ensure nil
+   :ensure nil
   :load-path "/usr/share/emacs/site-lisp/mu4e/"
   :defer 20
   :hook
@@ -1136,7 +1171,7 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
 ;;   :custom-face
 ;;   (font-lock-comment-face ((t (:slant italic)))))
 (use-package smtpmail
-  :ensure nil
+   :ensure nil
   :config
   (setopt message-send-mail-function 'smtpmail-send-it
           smtpmail-stream-type 'starttls
@@ -1157,7 +1192,7 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
 ;; (after! wildcharm-theme
 ;;   (set-face-attribute 'header-line nil :extend nil))
 (use-package shell-pop
-  :config
+   :config
   (defvar my/shell-pop-project-index-map (make-hash-table :test 'equal)
     "Map from project root to shell-pop instance index.")
 
@@ -1193,21 +1228,21 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
                                 (vterm))))))
   (shell-pop-autocd-to-working-dir nil))
 (use-package agent-shell
-  :hook
+   :hook
   (agent-shell-mode . (lambda () (display-line-numbers-mode -1))))
 (use-package ement)
 ;; (setopt ement-room-avatars t)
 ;; (use-package outline-indent)
 ;; (use-package yamal-mode)
 (use-package tramp-rpc
-  :after tramp
+   :after tramp
   :vc (:url "https://github.com/ArthurHeymans/emacs-tramp-rpc"
 	    :rev :newest
 	    :lisp-dir "lisp"))
 (use-package eredis)
 (use-package org-sidebar)
 (use-package apheleia
-  :config
+   :config
   (add-to-list 'apheleia-formatters
                '(prettierd . ("prettierd" "--stdin-filepath" filepath
                               (apheleia-formatters-js-indent
@@ -1238,13 +1273,13 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
   (apheleia-global-mode +1))
 ;; src: https://www.jamescherti.com/emacs-the-definitive-guide-to-code-folding/
 (use-package kirigami
-  :commands (kirigami-open-fold
-             kirigami-open-fold-rec
-             kirigami-close-fold
-             kirigami-toggle-fold
-             kirigami-open-folds
-             kirigami-close-folds-except-current
-             kirigami-close-folds)
+   :commands (kirigami-open-fold
+              kirigami-open-fold-rec
+              kirigami-close-fold
+              kirigami-toggle-fold
+              kirigami-open-folds
+              kirigami-close-folds-except-current
+              kirigami-close-folds)
 
   :bind
   (("C-c z o" . kirigami-open-fold)
@@ -1254,7 +1289,7 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
    ("C-c z m" . kirigami-close-folds)
    ("C-c z a" . kirigami-toggle-fold)))
 (with-eval-after-load 'evil
-  (define-key evil-normal-state-map "zo" #'kirigami-open-fold)
+   (define-key evil-normal-state-map "zo" #'kirigami-open-fold)
   (define-key evil-normal-state-map "zO" #'kirigami-open-fold-rec)
   (define-key evil-normal-state-map "zc" #'kirigami-close-fold)
   (define-key evil-normal-state-map "za" #'kirigami-toggle-fold)
@@ -1262,100 +1297,144 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
   (define-key evil-normal-state-map "zm" #'kirigami-close-folds))
 (use-package yequake)
 (setq yequake-frames
-      '(("Yequake & scratch" .
-         ;; integers (pixels), not floats: yequake computes float
-         ;; width/height as a fraction of `frame-monitor-attributes' on
-         ;; the *currently selected frame*, which at toggle time is the
-         ;; daemon's non-graphical tty frame (~80x25), not the real
-         ;; 1920x1080 display - that produced a tiny 96x132 frame.
-         ((width . 1920)
-          (height . 432)
-          (alpha . 0.95)
-          (buffer-fns . ((lambda ()
-                           (switch-to-buffer
-                            (find-file-noselect "~/src/emacs/yequake/yequake.el")))
-                         split-window-horizontally
-                         (lambda ()
-                           (switch-to-buffer "*scratch*"))))
-          (frame-parameters . ((undecorated . t)
-                               (window-system . x)
-                               (visibility . nil)))))))
+           '(("vterm" .
+              ;; integers (pixels), not floats: yequake computes float
+              ;; width/height as a fraction of `frame-monitor-attributes' on
+              ;; the *currently selected frame*, which at toggle time is the
+              ;; daemon's non-graphical tty frame (~80x25), not the real
+              ;; 1920x1080 display - that produced a tiny 96x132 frame.
+              ((width . 1920)
+               (height . 648)
+               (alpha . 0.95)
+               (buffer-fns . ((lambda ()
+				;; `vterm-buffer-name-string' (set globally to
+				;; "*vterm: %s*") renames this buffer away from
+				;; "*yequake-vterm*" as soon as the shell sends its
+				;; OSC title, so the next toggle's `get-buffer-create
+				;; "*yequake-vterm*"' never finds it and spawns a
+				;; fresh shell. Disable the rename for this buffer
+				;; only, so it keeps its name and gets reused.
+				(let* ((vterm-buffer-name "*yequake-vterm*")
+                                       (buf (vterm)))
+				  (with-current-buffer buf
+				    (setq-local vterm-buffer-name-string nil))
+				  buf))))
+               (frame-parameters . ((undecorated . t)
+				    (window-system . x)
+				    (visibility . nil)))))
+             ("org-capture" .
+              ((width . 1440)
+               (height . 540)
+               (alpha . 0.95)
+               ;; Pass the "n" key directly: `org-capture-select-template's
+               ;; menu prompt loses X focus immediately under sxwm, which
+               ;; blocks the daemon's command loop forever (wedging every
+               ;; other emacsclient call) since keystrokes never arrive.
+               (buffer-fns . ((lambda () (yequake-org-capture nil "t"))))
+               (frame-parameters . ((undecorated . t)
+				    (skip-taskbar . t)
+				    (sticky . t)
+				    (window-system . x)
+				    (visibility . nil)))))))
+
+;; `yequake-toggle's "hide if focused" check relies on `yequake-focused',
+;; which is set by `focus-in-hook'/`focus-out-hook'. Under sxwm, floating
+;; frames lose X focus almost immediately after being mapped, so
+;; `yequake-focused' is usually nil by the time the next toggle runs - the
+;; existing frame is then just re-focused (often landing on it iconified)
+;; instead of hidden, and never closes. Toggle on visibility instead:
+;; if any frame named NAME is visible (or iconified), close it; otherwise
+;; show/create it via the normal `yequake-toggle'.
+;; NOTE: only bound for "vterm". For "org-capture", `delete-frame' on a
+;; frame with an unfinalized capture buffer can trigger a blocking
+;; "abort capture?" confirmation that the unfocused frame can't answer,
+;; wedging the daemon - so org-capture keeps the plain `yequake-toggle'.
+(defun my/yequake-toggle (name)
+   (if-let* ((frames (seq-filter (lambda (f)
+                                   (and (equal (frame-parameter f 'name) name)
+					(frame-visible-p f)))
+                                 (frame-list))))
+       (mapc #'delete-frame frames)
+     (yequake-toggle name)))
 
 ;; sxwm floats a window immediately (without ever tiling it) if
 ;; _NET_WM_WINDOW_TYPE is UTILITY/DIALOG/etc. at map time, and centers it
 ;; at its requested size. The frame is created invisible (visibility . nil
 ;; above) so this property can be set before it's ever mapped, avoiding a
 ;; tile-then-float flash and the wrong (tiled) size that came with it.
-;; Match on yequake's own frame name ("Yequake & scratch", the key in
-;; yequake-frames) - don't override `name` in frame-parameters, since
-;; yequake uses it via make-frame-names-alist to find/toggle the frame.
+;; Match on yequake's own frame names (the keys in yequake-frames) - don't
+;; override `name` in frame-parameters, since yequake uses it via
+;; make-frame-names-alist to find/toggle the frame.
+;; Both frames stay centered: sxwm re-centers floating windows on every
+;; map (not just first creation), so any post-hoc reposition to the top
+;; would cause a visible centered->top jump on each toggle.
 (add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (when (equal (frame-parameter frame 'name) "Yequake & scratch")
+	  (lambda (frame)
+            (when (member (frame-parameter frame 'name) '("vterm" "org-capture"))
               (x-change-window-property "_NET_WM_WINDOW_TYPE"
-                                         (list "_NET_WM_WINDOW_TYPE_UTILITY")
-                                         frame "ATOM" 32 t)
+                                        (list "_NET_WM_WINDOW_TYPE_UTILITY")
+                                        frame "ATOM" 32 t)
               (make-frame-visible frame))))
 
 ;; s g T inste
 (general-def
-  'normal
+   'normal
   :prefix "C-b"
   :keymaps 'magit-mode-map
   "n" 'tab-next
   "p" 'tab-previous
   "c" 'tab-new)
 (general-def
-  :keymaps 'org-mode-map
+   :keymaps 'org-mode-map
   "C-c r e" 'verb-send-request-on-point-other-window)
 ;; (general-unbind :keymaps 'minibuffer-mode-map "C-n")
 ;; (general-unbind :keymaps 'go-mode-map "g d")
 ;; read windowmove autounbind
 (general-def :keymaps 'override
-  "C-/" 'help-command
+   "C-/" 'help-command
   "C-l" 'windmove-right
   "C-k" 'windmove-up
   "C-j" 'windmove-down
   "C-w" 'backward-kill-word)
-(general-def 'normal :keymaps 'override 
-  ;; src: https://stackoverflow.com/questions/7826844/how-do-i-rebind-the-emacs-help-key-normally-bound-to-c-h-and-f1
+(general-def 'normal :keymaps 'override
+   ;; src: https://stackoverflow.com/questions/7826844/how-do-i-rebind-the-emacs-help-key-normally-bound-to-c-h-and-f1
   "C-u" 'evil-scroll-up
   "C-h" 'windmove-left
   "g t" 'tab-line-switch-to-next-tab
   "g T" 'tab-line-switch-to-prev-tab)
 (general-def 'normal
-  "SPC ." 'find-file
+   "SPC ." 'find-file
   "SPC D" 'dirvish
   "SPC <" 'switch-to-buffer)
 
 (general-def "C-S-w" 'tab-close)
 (general-def 'normal
-  :prefix "C-b"
+   :prefix "C-b"
   "n" 'tab-next
   "p" 'tab-previous
   "c" 'tab-new)
 (general-def 'normal
-  :prefix "SPC t"
+   :prefix "SPC t"
   "s" 'my/tunnel-start
   "x" 'my/tunnel-stop
   "b" 'my/ejc-table-browser)
 (general-def 'normal
-  :prefix "SPC s"
+   :prefix "SPC s"
   "g" 'my/start-Go
   "b" 'my/start-Bun)
 (general-def :keymaps 'flymake-mode-map
-  :prefix "M-g"
+   :prefix "M-g"
   "n" 'flymake-goto-next-error
   "p" 'flymake-goto-prev-error)
 ;; auto close lsp window?
 (with-eval-after-load 'magit
-  (general-def
-    :states '(normal motion)
-    :keymaps 'override
-    :prefix "C-b"
-    "n" 'tab-next
-    "p" 'tab-previous
-    "c" 'tab-new)
+   (general-def
+     :states '(normal motion)
+     :keymaps 'override
+     :prefix "C-b"
+     "n" 'tab-next
+     "p" 'tab-previous
+     "c" 'tab-new)
   (general-def
     :states '(normal motion)
     :keymaps 'override
@@ -1368,19 +1447,19 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
   (general-def 'motion magit-mode-map
     "C-b" nil))
 (with-eval-after-load 'go-mode
-  (general-def :states 'normal :keymaps 'go-mode-map
-    "g d" 'lsp-find-definition
-    "g i" 'my/lsp-find-implementation-skip-single
-    "g r" 'lsp-find-references
-    "SPC t p" 'lsp-treemacs-errors-list
-    "K" 'my/lsp-hover-doc-at-point)
+   (general-def :states 'normal :keymaps 'go-mode-map
+     "g d" 'lsp-find-definition
+     "g i" 'my/lsp-find-implementation-skip-single
+     "g r" 'lsp-find-references
+     "SPC t p" 'lsp-treemacs-errors-list
+     "K" 'my/lsp-hover-doc-at-point)
   (general-def :states 'normal
     "SPC t p" 'treemacs-quit))
 ;; (general-create-definer my-leader-def
 ;;   ;; :prefix my-leader
 ;;   :prefix "SPC"
 ;;   )
-;; 
+;;
 
 
 ;; (my-leader-def
@@ -1418,28 +1497,28 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
 ;; src: https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/
 
 (with-eval-after-load 'lsp-ui-doc
-  (defun lsp-ui-doc--extract (contents)
-    "Extract documentation, using lsp-mode's render path for markdown."
-    (if (and (lsp-markup-content? contents)
-             (string= (lsp:markup-content-kind contents) lsp/markup-kind-markdown))
-        ;; Use the same render path as lsp-describe-thing-at-point
-        (lsp--render-on-hover-content contents t)
-      ;; Original logic for other content types
-      (cond
-       ((vectorp contents)
-        (mapconcat 'lsp-ui-doc--extract-marked-string
-                   (lsp-ui-doc--filter-marked-string (seq-filter #'identity contents))
-                   "\n\n"))
-       ((and (lsp-marked-string? contents)
-             (lsp:marked-string-language contents))
-        (lsp-ui-doc--extract-marked-string (lsp:marked-string-value contents)
-                                           (lsp:marked-string-language contents)))
-       ((stringp contents)
-        (lsp-ui-doc--extract-marked-string contents lsp/markup-kind-markdown))
-       ((lsp-marked-string? contents) (lsp-ui-doc--extract-marked-string contents))
-       ((and (lsp-markup-content? contents)
-             (string= (lsp:markup-content-kind contents) lsp/markup-kind-plain-text))
-        (lsp:markup-content-value contents))))))
+   (defun lsp-ui-doc--extract (contents)
+     "Extract documentation, using lsp-mode's render path for markdown."
+     (if (and (lsp-markup-content? contents)
+              (string= (lsp:markup-content-kind contents) lsp/markup-kind-markdown))
+         ;; Use the same render path as lsp-describe-thing-at-point
+         (lsp--render-on-hover-content contents t)
+       ;; Original logic for other content types
+       (cond
+	((vectorp contents)
+         (mapconcat 'lsp-ui-doc--extract-marked-string
+                    (lsp-ui-doc--filter-marked-string (seq-filter #'identity contents))
+                    "\n\n"))
+	((and (lsp-marked-string? contents)
+              (lsp:marked-string-language contents))
+         (lsp-ui-doc--extract-marked-string (lsp:marked-string-value contents)
+                                            (lsp:marked-string-language contents)))
+	((stringp contents)
+         (lsp-ui-doc--extract-marked-string contents lsp/markup-kind-markdown))
+	((lsp-marked-string? contents) (lsp-ui-doc--extract-marked-string contents))
+	((and (lsp-markup-content? contents)
+              (string= (lsp:markup-content-kind contents) lsp/markup-kind-plain-text))
+         (lsp:markup-content-value contents))))))
 ;; evil state display are kinda important
 ;; default agent shell to deepseek high
 ;; keybinding for agent shell C-c a ...

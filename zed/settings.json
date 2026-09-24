@@ -7,6 +7,26 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "ssh_connections": [
+    {
+      "host": "192.168.0.100",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/ionize13/github.com/qualiva/web"
+          ]
+        },
+        {
+          "paths": [
+            "/home/ionize13/github.com/qualiva/worktrees/web/bold-plover/web/./"
+          ]
+        }
+      ]
+    }
+  ],
+  "cli_default_open_behavior": "existing_window",
+  "agent_servers": {},
   "icon_theme": {
     "mode": "dark",
     "light": "Zed (Default)",
@@ -50,8 +70,8 @@
       "breadcrumbs": false,
     },
     "bell": "system",
-    "font_family": "JetBrainsMono NF Thai",
-    "font_size": 14.15,
+    "font_family": "JetBrains Mono Thai",
+    "font_size": 13.0,
   },
   "outline_panel": {
     "dock": "right",
@@ -63,6 +83,8 @@
     "dock": "left",
     "favorite_models": [],
     "model_parameters": [],
+    "notify_when_agent_waiting": "all_screens",
+    "play_sound_when_agent_done": "when_hidden",
   },
   "git_panel": {
     "dock": "right",
@@ -87,19 +109,22 @@
     "trust_all_worktrees": true,
   },
   "vim_mode": true,
-  "ui_font_size": 15.0,
-  "buffer_font_size": 14.0,
+  "ui_font_size": 13.0,
+  "buffer_font_size": 13.0,
   "title_bar": {
     "show_onboarding_banner": false,
-    "show_project_items": false,
+    "show_project_items": true,
     "show_branch_name": true,
     "show_user_menu": false,
   },
   "tab_bar": {
     "show": false,
   },
+  "toolbar": {
+    "quick_actions": false,
+  },
   "status_bar": {
-    "experimental.show": false,
+    "experimental.show": true,
   },
   "scrollbar": {
     "show": "never",

@@ -94,6 +94,10 @@ require("lazy").setup({
                 ["<C-k>"] = { "show_signature", "hide_signature", "fallback" },
             },
 
+            enabled = function()
+                return not vim.tbl_contains({ "org" }, vim.bo.filetype)
+            end,
+
             appearance = {
                 -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
                 -- Adjusts spacing to ensure icons are aligned
@@ -200,6 +204,22 @@ require("lazy").setup({
     -- { 'shaunsingh/nord.nvim'},
     { "ellisonleao/gruvbox.nvim", priority = 1000 , config = true, opts = ...},
     { "echasnovski/mini.align", version = false, opts = {} },
+    {
+	'nvim-orgmode/orgmode',
+	ft = 'org',
+	config = function() require('orgmode').setup({}) end,
+    },
+    {
+	'nvim-orgmode/org-bullets.nvim',
+	ft = 'org',
+	opts = {
+	    concealcursor = false, -- เห็น * จริงเมื่อ cursor อยู่บรรทัดนั้น
+	    symbols = {
+		list = '•',
+		headlines = { '◉', '○', '✸', '✿' },
+	    },
+	},
+    },
 })
 
 require("skel-nvim").setup{
@@ -305,3 +325,46 @@ require('gitsigns').setup {
     map('n', '<leader>gs', gitsigns.stage_hunk, 'Stage hunk')
   end,
 }
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'org',
+  callback = function()
+    local org = require('orgmode')
+
+    local function is_list_item(line)
+      return line:match('^%s+[-+*]%s')   -- list ที่มี indent (รวม * ที่ indent)
+	or line:match('^[-+]%s')         -- list ระดับบนสุด
+	or line:match('^%s*%d+[.)]%s')   -- ordered list
+    end
+
+    -- Ctrl+Enter / Alt+Enter: item หรือ heading ใหม่ ระดับเดียวกัน
+    local function same_level()
+      org.action('org_mappings.meta_return')
+    end
+
+    -- (Alt/Ctrl)+Shift+Enter: TODO heading ระดับเดียวกัน
+    -- ถ้าอยู่บน list item จะได้ checkbox แทน
+    local function same_level_todo()
+      local line = vim.api.nvim_get_current_line()
+      if is_list_item(line) then
+	org.action('org_mappings.meta_return')
+	vim.schedule(function()
+	  local new = vim.api.nvim_get_current_line()
+	  if not new:match('%[.%]') then
+	    local row = vim.api.nvim_win_get_cursor(0)[1]
+	    vim.api.nvim_set_current_line(new .. '[ ] ')
+	    vim.api.nvim_win_set_cursor(0, { row, #new + 4 })
+	  end
+	end)
+      else
+	org.action('org_mappings.insert_todo_heading')
+      end
+    end
+
+    local opts = { buffer = true }
+    vim.keymap.set({ 'i', 'n' }, '<C-CR>', same_level, opts)
+    vim.keymap.set({ 'i', 'n' }, '<M-CR>', same_level, opts)
+    vim.keymap.set({ 'i', 'n' }, '<C-S-CR>', same_level_todo, opts)
+    vim.keymap.set({ 'i', 'n' }, '<M-S-CR>', same_level_todo, opts)
+  end,
+})
