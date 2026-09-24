@@ -38,7 +38,8 @@ vim.keymap.set('n', '<leader>Y', '\"+Y')
 vim.keymap.set('n', '<leader>d', '\"_d')
 vim.keymap.set('v', '<leader>d', '\"_d')
 
-vim.keymap.set('n', '<leader>x', '<cmd>!chmod +x %r<CR>', { silent = true })
+vim.keymap.set('n', '<leader>x', '<cmd>!chmod +x %<CR>', { silent = true })
+-- vim.keymap.set('n', '<leader>x', '<cmd>!chmod +x %r<CR>', { silent = true })
 
 -----------------
 -- Visual mode --
@@ -50,11 +51,15 @@ vim.keymap.set('v', '>', '>gv', opts)
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 
-vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
-vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
-vim.keymap.set('n', '<leader>fd', builtin.resume, { desc = 'Telescope resume' })
+-- vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<leader>f', builtin.find_files, { desc = 'Telescope find files' })
+-- vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
+vim.keymap.set('n', '<leader>*', function()
+  builtin.live_grep({ default_text = vim.fn.expand('<cword>') })
+end, { desc = 'Telescope live grep word under cursor' })
+-- vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
+-- vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+-- vim.keymap.set('n', '<leader>fd', builtin.resume, { desc = 'Telescope resume' })
 
 vim.keymap.set('n', '<leader>e', '', {
     noremap = true,

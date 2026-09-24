@@ -8,37 +8,42 @@ local act = wezterm.action
 
 -- src: https://www.florianbellmann.com/blog/switch-from-tmux-to-wezterm#keybindings-for-multiplexing
 -- Leader is the same as tmux prefix
-config.leader = { key = 'b', mods = 'CTRL', timeout_milliseconds = 1000 }
-config.keys = {
-  -- splitting
-  {
-      mods   = "LEADER|SHIFT",
-      key    = '"',
-      action = act.SplitVertical { domain = 'CurrentPaneDomain' }
-  },
-  {
-      mods   = "LEADER|SHIFT",
-      key    = "%",
-      action = act.SplitHorizontal { domain = 'CurrentPaneDomain' }
-  },
-  {
-      mods   = "LEADER",
-      key    = "c",
-      action = act.SpawnTab "CurrentPaneDomain"
-  },
-  { 
-      mods   = 'LEADER', 
-      key    = 'n', 
-      action = act.ActivateTabRelative(1)
-  },
-  { 
-      mods   = 'LEADER', 
-      key    = 'p', 
-      action = act.ActivateTabRelative(-1) 
-  }
+-- config.leader = { key = 'b', mods = 'CTRL', timeout_milliseconds = 1000 }
+-- config.keys = {
+--   -- splitting
+--   {
+--       mods   = "LEADER|SHIFT",
+--       key    = '"',
+--       action = act.SplitVertical { domain = 'CurrentPaneDomain' }
+--   },
+--   {
+--       mods   = "LEADER|SHIFT",
+--       key    = "%",
+--       action = act.SplitHorizontal { domain = 'CurrentPaneDomain' }
+--   },
+--   {
+--       mods   = "LEADER",
+--       key    = "c",
+--       action = act.SpawnTab "CurrentPaneDomain"
+--   },
+--   {
+--       mods   = 'LEADER',
+--       key    = 'n',
+--       action = act.ActivateTabRelative(1)
+--   },
+--   {
+--       mods   = 'LEADER',
+--       key    = 'p',
+--       action = act.ActivateTabRelative(-1)
+--   }
+-- }
+
+config.color_scheme = 'Tango (terminal.sexy)'
+config.colors = {
+  background = '#300A24',
 }
 
-config.window_background_opacity = 0.88
+-- config.window_background_opacity = 0.88
 config.window_decorations = "RESIZE"
 config.hide_tab_bar_if_only_one_tab = true
 -- config.background = {
@@ -59,10 +64,13 @@ config.window_padding = {
 config.freetype_load_target = 'Light'
 
 config.font = wezterm.font_with_fallback {
-    'JetBrains Mono',
-    { family = 'SOV_monospace', weight = 600, scale = 1.2}
-    -- สวัสดั
+    'JetBrains Mono Thai'
+    -- 'JetBrains Mono',
+    -- -- 'PWThaiMonospacedEG'
+    -- { family = 'SOV_monospace', weight = 600, scale = 1.2}
+    -- -- สวัสดั
 }
+config.font_size = 17.0
 
 -- config.unix_domains = {
 --   {
@@ -97,42 +105,50 @@ function tab_title(tab_info)
   return tab_info.active_pane.title
 end
 
-wezterm.on(
-  'format-tab-title',
-  function(tab, tabs, panes, config, hover, max_width)
-    local edge_background = '#0b0022'
-    local background = '#1b1032'
-    local foreground = '#808080'
-
-    if tab.is_active then
-      background = '#2b2042'
-      foreground = '#c0c0c0'
-    elseif hover then
-      background = '#3b3052'
-      foreground = '#909090'
-    end
-
-    local edge_foreground = background
-
-    local title = tab_title(tab)
-
-    -- ensure that the titles fit in the available space,
-    -- and that we have room for the edges.
-    title = wezterm.truncate_right(title, max_width - 2)
-
-    return {
-      { Background = { Color = edge_background } },
-      { Foreground = { Color = edge_foreground } },
-      { Text = SOLID_LEFT_ARROW },
-      { Background = { Color = background } },
-      { Foreground = { Color = foreground } },
-      { Text = title },
-      { Background = { Color = edge_background } },
-      { Foreground = { Color = edge_foreground } },
-      { Text = SOLID_RIGHT_ARROW },
-    }
-  end
-)
+-- wezterm.on(
+--   'format-tab-title',
+--   function(tab, tabs, panes, config, hover, max_width)
+--     local edge_background = '#0b0022'
+--     local background = '#1b1032'
+--     local foreground = '#808080'
+--
+--     if tab.is_active then
+--       background = '#2b2042'
+--       foreground = '#c0c0c0'
+--     elseif hover then
+--       background = '#3b3052'
+--       foreground = '#909090'
+--     end
+--
+--     local edge_foreground = background
+--
+--     local title = tab_title(tab)
+--
+--     -- ensure that the titles fit in the available space,
+--     -- and that we have room for the edges.
+--     title = wezterm.truncate_right(title, max_width - 2)
+--
+--     return {
+--       { Background = { Color = edge_background } },
+--       { Foreground = { Color = edge_foreground } },
+--       { Text = SOLID_LEFT_ARROW },
+--       { Background = { Color = background } },
+--       { Foreground = { Color = foreground } },
+--       { Text = title },
+--       { Background = { Color = edge_background } },
+--       { Foreground = { Color = edge_foreground } },
+--       { Text = SOLID_RIGHT_ARROW },
+--     }
+--   end
+-- )
+-- audible_bell = "Disabled",
+config.visual_bell = {
+    fade_in_function = "EaseIn",
+    fade_in_duration_ms = 150,
+    fade_out_function = "EaseOut",
+    fade_out_duration_ms = 150,
+}
+config.notification_handling = "AlwaysShow"
 
 -- Finally, return the configuration to wezterm:
 return config

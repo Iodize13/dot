@@ -6,22 +6,32 @@ shift + Alt_R
 # Basic binds
 
 # $TERMINAL -e tmux
-super + Return
-      $TERMINAL
+# super + Return
+#       $TERMINAL
 super + {b,n}
-      brillo -q {-U,-A} 5 
+      brillo -q {-U,-A} 5
+# XF86MonBrightness{Down,Up}
+#       brillo -q {-U,-A} 5
 super + {s,d}
-      pactl set-sink-volume @DEFAULT_SINK@ {-2%,+2%}
+      pactl set-sink-volume @DEFAULT_SINK@ {-4%,+4%}
 super + shift + {j,k}
-      pactl set-sink-volume @DEFAULT_SINK@ {-5%,+5%}
+      pactl set-sink-volume @DEFAULT_SINK@ {-2%,+2%}
 super + m
       kitty -e ncmpcpp
 super + i
       kitty -e htop
 super + shift + a
       kitty -e plusemixer
+# super + c
+#       emacsclient -c $HOME/note.org
 super + c
-      st -e $EDITOR $HOME/note.md
+      emacsclient -n -a '' -e '(yequake-toggle "org-capture")'
+# super + grave
+#       emacsclient -c -a '' -e '(org-agenda-list)'
+# pixel geometry (full width x 40% height, top of screen)
+# tdrop's percentage sizing is broken with gawk 5.x on this system, hence pixels
+super + grave
+      tdrop --class com.ionize13.tdrop -h 432 -w 1920 -x 0 -y 0 kitty --class=com.ionize13.tdrop
 
 # Et cetera...
 super + shift + x
@@ -34,19 +44,26 @@ super + y
     kitty -e y
 super + shift + y
     wezterm -e y
-super + shift + w
-    $BROWSER
+super + shift + b
+    nsxiv ~/uni/2y-2/timetable.png
+# Toggle the iPad vertical-monitor session (nested X + Deskreen)
+super + shift + i
+    ipad-monitor
 # Print
 # screenshot
 # Hibernate
 super + F12
+    netmenu
+super + shift + F12
     kitty -e nmtui
 super + z
     clipmpv
 Print
-    flameshot gui
-super + shift + p
+    flameshot gui && xdotool windowfocus $(xdotool getactivewindow)
+super + p
     passmenu
+super + shift + p
+    passmenu-otp
 super + x
     mpc pause; i3lock -e -f -c 1d2021; xset dpms force off
 # XF86Launch1
@@ -65,3 +82,11 @@ super + shift + c
     firefox http://login.kku.ac.th
 super + shift + v
     mpv $(xclip -o)
+super + shift + r
+    ~/github.com/speech-to-text/stt.sh
+
+# Media play/pause (MPRIS — Brave/YouTube, mpv, spotify, etc.)
+XF86AudioPlay
+    playerctl play-pause
+super + o
+    playerctl play-pause
