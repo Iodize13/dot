@@ -1,0 +1,15 @@
+#!/bin/sh
+
+FIGMA="$HOME/.local/src/figma-linux-x64/figma"
+qualiva_url="https://www.figma.com/design/vrbpLUG4QsTVauVqOR5EGn/Qualiva-Design"
+en_workshop=""
+
+if [[ -z "$1" ]]; then
+    "$FIGMA"
+elif [ "$1" = "q" ]; then
+    "$FIGMA" "$qualiva_url"
+elif [ "$1" = "en" ]; then
+    "$FIGMA" "$en_workshop"
+else 
+    "$FIGMA" "$1"
+fi

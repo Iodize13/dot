@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+
+PREFIX="kkumail"
+
+CLIENT_ID=$(gpg --quiet --for-your-eyes-only --no-tty --decrypt "$HOME/.password-store/${PREFIX}/client-id.gpg")
+CLIENT_SECRET=$(gpg --quiet --for-your-eyes-only --no-tty --decrypt "$HOME/.password-store/${PREFIX}/client-secret.gpg")
+REFRESH_TOKEN=$(gpg --quiet --for-your-eyes-only --no-tty --decrypt "$HOME/.password-store/${PREFIX}/refresh-token.gpg")
+
+curl -s --request POST \
+  --data "client_id=${CLIENT_ID}" \
+  --data "client_secret=${CLIENT_SECRET}" \
+  --data "refresh_token=${REFRESH_TOKEN}" \
+  --data "grant_type=refresh_token" \
+  https://oauth2.googleapis.com/token \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])"

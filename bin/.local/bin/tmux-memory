@@ -1,0 +1,14 @@
+#!/bin/sh
+~/.tmux/plugins/tmux-mem-cpu-load/tmux-mem-cpu-load -g 0 -a 0 | tr -d '\0' | awk '{
+  match($0, /^[0-9]+/)
+  mb = substr($0, RSTART, RLENGTH) + 0
+  sub(/^[0-9]+(MB)?/, sprintf("%.1f", mb / 1024) "GB")
+
+  if (match($0, /\/[0-9]+MB/)) {
+    total_mb = substr($0, RSTART + 1, RLENGTH - 3) + 0
+    sub(/\/[0-9]+MB/, "/" sprintf("%.1f", total_mb / 1024) "GB")
+  }
+
+  sub(/[[:space:]]+[0-9.]+%.*/, "")
+  print
+}'

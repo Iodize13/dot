@@ -1,0 +1,16 @@
+#!/bin/sh
+
+MIRO="$HOME/.local/src/miro-linux-x64/miro"
+qualiva_url="https://miro.com/app/board/uXjVI7Ce7r0=/"
+en_workshop="https://miro.com/app/board/uXjVJFJIkaQ=/"
+
+if [ "$1" = "q" ]; then
+    "$MIRO" "$qualiva_url"
+elif [ "$1" = "en" ]; then
+    "$MIRO" "$en_workshop"
+# This is weird logic but for learning
+elif ! [[ -z "$1" ]]; then
+    "$MIRO" "$1"
+else 
+    "$MIRO"
+fi

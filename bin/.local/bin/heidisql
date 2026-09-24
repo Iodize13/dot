@@ -1,0 +1,3 @@
+#!/bin/sh
+
+GTK2_RC_FILES="$HOME/.config/themes/trollwut-pink-dark/gtk-2.0/gtkrc" GTK_DATA_PREFIX= /usr/sbin/heidisql

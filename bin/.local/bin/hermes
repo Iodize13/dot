@@ -1,0 +1,4 @@
+#!/bin/sh
+
+printf '\033]0;Hermes\007'
+exec /home/ionize13/.hermes/hermes-agent/venv/bin/hermes "$@"

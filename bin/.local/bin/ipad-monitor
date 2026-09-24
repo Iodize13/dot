@@ -1,0 +1,38 @@
+#!/bin/sh
+# Bring up the vkms virtual monitor (sized for the iPad Air 4) and serve it
+# view-only over VNC on the direct USB-C ethernet link.
+
+set -e
+
+VIRT_OUTPUT="Virtual-1-1"
+MODE_NAME="2360x1640_60.00"
+MODELINE="328.50 2360 2536 2792 3224 1640 1643 1653 1700 -hsync +vsync"
+GEOMETRY="2360x1640+1920+0"
+LINK_IP="10.13.37.1"
+VNC_PASSWD="$HOME/.vnc/ipad.passwd"
+
+lsmod | grep -q '^vkms ' || sudo modprobe vkms
+
+xrandr --setprovideroutputsource modesetting Intel 2>/dev/null || true
+
+xrandr | grep -q "$MODE_NAME" || {
+	xrandr --newmode "$MODE_NAME" $MODELINE
+	xrandr --addmode "$VIRT_OUTPUT" "$MODE_NAME"
+}
+
+xrandr | grep "^$VIRT_OUTPUT" | grep -q "2360x1640+1920+0" ||
+	xrandr --output "$VIRT_OUTPUT" --mode "$MODE_NAME" --pos 1920x0
+
+# Find the USB-C ethernet link to the iPad and give it a static address
+LINK_IF=$(ip -o link show | awk -F': ' '/enx/{print $2}' | head -1)
+if [ -n "$LINK_IF" ]; then
+	ip link set "$LINK_IF" up
+	ip addr show "$LINK_IF" | grep -q "$LINK_IP/24" ||
+		sudo ip addr add "$LINK_IP/24" dev "$LINK_IF"
+else
+	echo "warning: no enx* USB ethernet interface found, x11vnc may fail to bind $LINK_IP" >&2
+fi
+
+echo "Serving $GEOMETRY on $LINK_IP:5900 (view-only)"
+exec x11vnc -display :0 -clip "$GEOMETRY" -viewonly -forever -shared \
+	-rfbauth "$VNC_PASSWD" -rfbport 5900 -listen "$LINK_IP"

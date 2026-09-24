@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Switch Brave tab based on current tmux window name.
+# Requires Brave running with --remote-debugging-port=9222 (use ~/.local/bin/brave wrapper).
+# Mapping file: ~/.config/brave-tmux-tabs
+#   Format: window_name=regex  (matched case-insensitively against URL + title)
+
+CDP="http://localhost:9222"
+MAPPING_FILE="${HOME}/.config/brave-tmux-tabs"
+WINDOW_NUM="${1:-$(tmux display-message -p '#I' 2>/dev/null)}"
+
+[[ -z "$WINDOW_NUM" ]] && exit 0
+[[ ! -f "$MAPPING_FILE" ]] && exit 0
+
+PATTERN=$(grep -m1 "^${WINDOW_NUM}=" "$MAPPING_FILE" | cut -d= -f2-)
+[[ -z "$PATTERN" ]] && exit 0
+
+TAB_ID=$(curl -sf "${CDP}/json" | \
+  jq -r --arg p "$PATTERN" \
+  '[.[] | select(.type == "page")] | map(select((.url + " " + .title) | test($p; "i"))) | first | .id' \
+  2>/dev/null)
+
+[[ -z "$TAB_ID" || "$TAB_ID" == "null" ]] && exit 0
+
+curl -sf -X POST "${CDP}/json/activate/${TAB_ID}" > /dev/null

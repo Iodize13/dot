@@ -1,0 +1,6 @@
+#/bin/sh
+
+proj_note=$(cat /tmp/proj-note)
+# Add newline before enter
+echo >> "$proj_note"
+${EDITOR:-nano} "$proj_note"
