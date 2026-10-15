@@ -7,3 +7,8 @@ nvim/nvim/transparent_cache
 # yazi plugins/flavors are installed from package.toml
 yazi/yazi/plugins/
 yazi/yazi/flavors/
+# untracked: contains credentials
+goimapnotify/
+# backups and generated files
+*.bak
+nvim/nvim/lazy-rocks/

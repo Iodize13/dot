@@ -1,0 +1,3 @@
+new_tab note
+cd /home/ionize13
+launch nvim /home/ionize13/note.md
