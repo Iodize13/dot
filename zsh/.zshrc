@@ -151,8 +151,9 @@ export PATH="$PATH:$HOME/.local/bin"
 export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 
 command -v fnm &> /dev/null && eval "$(fnm env --use-on-cd --version-file-strategy recursive --shell zsh)"
-command -v toilet &> /dev/null && toilet -f Cybermedium --rainbow "It's just
-earthly things."
+# command -v toilet &> /dev/null && toilet -f Cybermedium --rainbow "It's just
+# earthly things."
+echo "That's what Himmel the Hero would do."
 command -v fzf &> /dev/null && source <(fzf --zsh)
 command -v direnv &> /dev/null && eval "$(direnv hook zsh)"
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -167,3 +168,7 @@ export PATH="$HOME/.grok/bin:$PATH"
 fpath=(~/.grok/completions/zsh $fpath)
 autoload -Uz compinit && compinit -C
 # <<< grok installer <<<
+
+gcd() {
+  GIT_AUTHOR_DATE="$1" GIT_COMMITTER_DATE="$1" git commit -m "$2"
+}

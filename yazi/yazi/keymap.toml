@@ -41,3 +41,16 @@ desc = "Archive selected files (compression level)"
 on   = [ "c", "a", "u" ]
 run  = "plugin compress -phl"
 desc = "Archive selected files (password+header+level)"
+
+# --- git ---
+[[mgr.prepend_keymap]]
+on   = [ "g", "i" ]
+for  = "unix"
+run  = 'shell --block -- lazygit'
+desc = "Open lazygit"
+
+[[mgr.prepend_keymap]]
+on   = [ "g", "p" ]
+for  = "unix"
+run  = 'shell --block -- git push; printf "\nPress Enter..."; read -r _'
+desc = "git push"

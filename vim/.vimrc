@@ -6,6 +6,10 @@ sy on
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 set termguicolors background=dark
+" transparent bg: let the terminal (kitty) background show through
+autocmd ColorScheme * hi Normal guibg=NONE ctermbg=NONE | hi NonText guibg=NONE ctermbg=NONE
+      \ | hi EndOfBuffer guibg=NONE ctermbg=NONE | hi LineNr guibg=NONE ctermbg=NONE
+      \ | hi SignColumn guibg=NONE ctermbg=NONE
 silent! colorscheme wildcharm
 
 set nofsync swapsync=          " don't block on journal commits

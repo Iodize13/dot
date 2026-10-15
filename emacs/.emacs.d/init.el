@@ -1081,6 +1081,10 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
    :config
   (which-key-mode))
 (use-package git-timemachine)
+;; Email addresses live in an untracked file (public repo); it defines
+;; my/mail-personal, my/mail-cockli, my/mail-uni and my/name-uni.
+(load (expand-file-name "private.el" user-emacs-directory) t)
+
 ;; src: https://systemcrafters.net/emacs-mail/
 (use-package mu4e
    :ensure nil
@@ -1105,7 +1109,7 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
             (lambda (msg)
               (when msg
                 (string-prefix-p "/Gmail" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "REDACTED_EMAIL")
+            :vars `((user-mail-address . ,my/mail-personal)
                     (user-full-name    . "iodize13")
 		    (mu4e-drafts-folder  . "/Gmail/[Gmail]/Drafts")
 		    (mu4e-sent-folder  . "/Gmail/[Gmail]/Sent Mail")
@@ -1118,7 +1122,7 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
 	    (lambda (msg)
 	      (when msg
 		(string-prefix-p "/Cock.li" (mu4e-message-field msg :maildir))))
-	    :vars '((user-mail-address . "REDACTED_EMAIL")
+	    :vars `((user-mail-address . ,my/mail-cockli)
 		    (user-full-name    . "ionize")
 		    (mu4e-drafts-folder  . "/Cock.li/Drafts")
 		    (mu4e-sent-folder  . "/Cock.li/Sent")
@@ -1131,8 +1135,8 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
             (lambda (msg)
               (when msg
 		(string-prefix-p "/Uni" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "REDACTED_EMAIL")
-                    (user-full-name    . "REDACTED_NAME")
+            :vars `((user-mail-address . ,my/mail-uni)
+                    (user-full-name    . ,my/name-uni)
                     (mu4e-drafts-folder  . "/Uni/[Gmail]/Drafts")
                     (mu4e-sent-folder  . "/Uni/[Gmail]/Sent Mail")
                     (mu4e-refile-folder  . "/Uni/[Gmail]/All Mail")
@@ -1179,7 +1183,7 @@ Wraps `lsp-imenu-create-uncategorized-index' and post-processes the labels."
 	  smtpmail-smtp-server "smtp.gmail.com"
 	  smtpmail-smtp-service 587
           smtpmail-servers-requiring-authorization "smtp\\.gmail\\.com"
-          smtpmail-smtp-user "REDACTED_EMAIL")
+          smtpmail-smtp-user my/mail-personal)
   (setopt message-kill-buffer-on-exit t)
   )
 (setopt mml-secure-openpgp-signers '("62F680CE36721F1865508AB6392207ABF1937EAB"))

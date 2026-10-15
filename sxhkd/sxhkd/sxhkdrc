@@ -60,9 +60,9 @@ super + z
     clipmpv
 Print
     flameshot gui && xdotool windowfocus $(xdotool getactivewindow)
-super + p
+alt + p
     passmenu
-super + shift + p
+alt + shift + p
     passmenu-otp
 super + x
     mpc pause; i3lock -e -f -c 1d2021; xset dpms force off

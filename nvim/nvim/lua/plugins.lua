@@ -220,6 +220,45 @@ require("lazy").setup({
 	    },
 	},
     },
+    {
+	'HakonHarnes/img-clip.nvim',
+	ft = { 'org', 'markdown' },
+	opts = {
+	    default = {
+		dir_path = 'img',                -- <file_dir>/img/
+		relative_to_current_file = true,
+		prompt_for_file_name = false,    -- ใช้ timestamp เป็นชื่อไฟล์
+		file_name = '%Y-%m-%d-%H-%M-%S',
+	    },
+	    filetypes = {
+		org = { template = '[[file:$FILE_PATH]]' },
+	    },
+	},
+	keys = {
+	    { '<leader>p', '<cmd>PasteImage<cr>', desc = 'Paste clipboard image' },
+	},
+    },
+    {
+	"3rd/image.nvim",
+	lazy = false,  -- ต้องโหลดก่อนเปิดไฟล์รูป ไม่งั้น hijack_file_patterns ไม่ทำงาน
+	opts = {
+	    backend = "kitty",
+	    processor = "magick_cli",  -- ใช้ ImageMagick CLI ไม่ต้องลง luarocks
+	    integrations = {
+		markdown = {
+		    only_render_image_at_cursor = false,
+		    filetypes = { 'markdown' },
+		},
+		org = {
+		    enabled = true,  -- built-in แต่ปิดไว้เป็น default; render [[file:...]] ที่เป็นรูป
+		},
+	    },
+	    max_height_window_percentage = 50,
+	    window_overlap_clear_enabled = true,
+	    tmux_show_only_in_active_window = true,
+	    hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" },
+	},
+    },
 })
 
 require("skel-nvim").setup{
