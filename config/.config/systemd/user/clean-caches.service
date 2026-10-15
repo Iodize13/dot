@@ -1,0 +1,8 @@
+[Unit]
+Description=Prune rebuildable caches in $HOME
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/clean-caches
+Nice=19
+IOSchedulingClass=idle
