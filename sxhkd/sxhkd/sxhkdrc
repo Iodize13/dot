@@ -76,12 +76,15 @@ super + F7
     tether
 # super + c
 #     nmcli connect up 5e6a8083-1980-415d-a9bf-55c213925e26
-super + v 
+super + ctrl + v
     nmcli connect up 3c75f44e-47c8-42ab-979c-aaf952183b00
 super + shift + c
     firefox http://login.kku.ac.th
 super + shift + v
     mpv $(xclip -o)
+# Clipboard history (clipse)
+super + v
+    clipse-toggle
 super + shift + r
     ~/github.com/speech-to-text/stt.sh
 

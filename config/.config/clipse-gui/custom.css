@@ -1,0 +1,18 @@
+/* Rounded, airy rows on top of the onedark theme */
+/* .main-window is the inner box; paint the toplevel too or GTK's light bg shows in its margin */
+window { background-color: #21252b; }
+.main-window { font-size: 11pt; }
+.main-window list, .main-window listbox { padding: 6px 8px; }
+.main-window .list-row {
+    margin: 2px 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-left-width: 0;
+}
+.main-window .list-row:selected { background-color: alpha(@selection, 0.22); }
+.main-window .pinned-row { box-shadow: inset 3px 0 @pin; }
+.main-window entry { border-radius: 8px; padding: 6px 10px; min-height: 32px; }
+.main-window .status-label { padding: 6px 12px; }
+/* Drop the system GTK theme's inset top highlight on buttons */
+.main-window button, .main-window .pin-toggle { box-shadow: none; border-radius: 8px; }
+.main-window button:focus { box-shadow: 0 0 0 2px alpha(#61afef, 0.5); }

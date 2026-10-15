@@ -1,0 +1,32 @@
+#!/usr/bin/python
+# clipse-gui tweaks:
+#  - plain `q` closes the window (same as Esc), unless typing in search
+#  - closing hides the window instead of quitting (no systray in dwm), so
+#    re-activating via D-Bus (see clipse-toggle) is instant
+import sys
+from clipse_gui.cli import main  # sets the GTK version; import before gi.repository
+from clipse_gui.controller_mixins.keyboard_mixin import KeyboardMixin
+from clipse_gui import constants
+from gi.repository import Gdk
+
+_dispatch = KeyboardMixin._dispatch_key
+
+def _dispatch_key(self, keyval, ctrl, shift):
+    if keyval == Gdk.KEY_q and not ctrl and not shift:
+        return self._handle_escape()
+    return _dispatch(self, keyval, ctrl, shift)
+
+def _handle_escape(self):
+    if self.selection_mode:
+        self.toggle_selection_mode()
+        return True
+    if constants.CLEAR_SEARCH_ON_ESCAPE and self.search_entry.get_text():
+        self.search_entry.set_text("")
+        self.list_box.grab_focus()
+        return True
+    self.window.hide()
+    return True
+
+KeyboardMixin._dispatch_key = _dispatch_key
+KeyboardMixin._handle_escape = _handle_escape
+sys.exit(main())

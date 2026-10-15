@@ -1,0 +1,4 @@
+#!/bin/sh
+# Show clipse-gui instantly via D-Bus if it's running, otherwise start it.
+gdbus call --session --dest org.d7om.ClipseGUI --object-path /org/d7om/ClipseGUI \
+    --method org.gtk.Application.Activate '{}' >/dev/null 2>&1 || exec clipse-gui-q

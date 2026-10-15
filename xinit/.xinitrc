@@ -33,6 +33,7 @@ systemctl --user import-environment DISPLAY XAUTHORITY
 # (emacs --daemon '' && emacsclient -c) &
 emacs --daemon=main &
 sxhkd &
+clipse -listen &
 # Invidious
 # podman restart 94dfc4181e7f & podman restart babcd77d56b2 &
 redshift -l 21.028382:105.853734 &
