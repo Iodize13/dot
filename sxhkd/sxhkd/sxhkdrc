@@ -68,8 +68,8 @@ super + x
     mpc pause; i3lock -e -f -c 1d2021; xset dpms force off
 # XF86Launch1
 #     xset dpms force off
-super + F4
-    prompt "Hibernate computer?" "sudo systemctl suspend"
+super + F5
+    prompt "Hibernate computer?" "sudo systemctl hibernate"
 super + F6
     kku-wifi
 super + F7

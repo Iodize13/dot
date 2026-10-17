@@ -7,3 +7,11 @@ git submodule update --init
 stow -v -R -t "$HOME" \
 	applications bash bin config discord emacs kanata kitty nvim profile \
 	sxhkd tmux vim wezterm xinit yazi zathura zed zsh
+
+# System: cap hibernation image at 6GB (larger = slow hibernate on encrypted swap)
+f=/etc/tmpfiles.d/hibernate-image-size.conf
+line='w /sys/power/image_size - - - - 6442450944'
+if [ "$(cat "$f" 2>/dev/null)" != "$line" ]; then
+	echo "$line" | sudo tee "$f" >/dev/null
+	sudo systemd-tmpfiles --create "$f"
+fi
