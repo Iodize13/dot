@@ -5,5 +5,5 @@ set -e
 cd "$(dirname "$0")"
 git submodule update --init
 stow -v -R -t "$HOME" \
-	applications bash bin config discord emacs kitty nvim profile \
+	applications bash bin config discord emacs kanata kitty nvim profile \
 	sxhkd tmux vim wezterm xinit yazi zathura zed zsh

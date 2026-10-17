@@ -1,0 +1,33 @@
+;; Session switching, modeled on linkarzu's toucan keymap (his thumb layer -> Space here).
+;; Hold Space + key sends C-b + key; kitty maps ctrl+b>... to session actions in ~/kitty/kitty.conf.
+
+(defcfg
+  process-unmapped-keys yes
+  ;; Space stays a plain space while typing fast (no hold within 150ms of last key)
+  tap-hold-require-prior-idle 150
+)
+
+(defsrc
+  spc h l q n c u d s lalt
+)
+
+(defalias
+  ;; tap = space, hold 200ms = session layer
+  spc  (tap-hold 200 200 spc (layer-while-held sess))
+  last (macro C-b S-l)
+  home (macro C-b S-h)
+  qual (macro C-b S-q)
+  note (macro C-b S-n)
+  cp   (macro C-b S-c)
+  uni  (macro C-b S-u)
+  dots (macro C-b S-d)
+  list (macro C-b s)        ;; fzf session picker
+)
+
+(deflayer base
+  @spc h l q n c u d s lalt
+)
+
+(deflayer sess
+  _ @home @last @qual @note @cp @uni @dots @list slck
+)
